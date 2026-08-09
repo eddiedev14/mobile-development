@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import { PHONE_REGEX } from "../contants/regex.constant";
 import { initialContacts } from "../data/contacts.data";
 import type { Contact, ContactFormData } from "../interfaces/contact.interface";
 
@@ -39,8 +40,15 @@ export const useContactsApp = () => {
       new FormData(form),
     ) as ContactFormData;
 
+    // Validar datos vacíos
     if (name.trim() === "" || phone.trim() === "") {
       toast.error("Todos los campos son obligatorios.");
+      return;
+    }
+
+    // Validar formato del telefono con la regex
+    if (!PHONE_REGEX.test(phone)) {
+      toast.error("El teléfono introducido no es válido");
       return;
     }
 
