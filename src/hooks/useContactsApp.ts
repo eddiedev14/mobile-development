@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
-import { PHONE_REGEX } from "../contants/regex.constant";
+import { PHONE_REGEX } from "../constants/regex.constant";
 import { initialContacts } from "../data/contacts.data";
 import type { Contact, ContactFormData } from "../interfaces/contact.interface";
 
