@@ -14,13 +14,11 @@ export const ContactsApp = () => {
       setLoading(false);
     }, 3000);
 
-    return () => {
-      clearTimeout(timeout);
-    };
+    return () => clearTimeout(timeout);
   }, []);
 
   //* Custom Hooks
-  const { contacts } = useContacts();
+  const { contacts, addContact } = useContacts();
 
   // Mostrar el loader con ayuda de las clases de Daisy UI
   if (loading) {
@@ -43,7 +41,7 @@ export const ContactsApp = () => {
       />
 
       <main className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <ContactForm />
+        <ContactForm addContact={addContact} />
         <ContactList contacts={contacts} />
       </main>
     </div>

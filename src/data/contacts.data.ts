@@ -1,4 +1,4 @@
-import type { Contact } from "../interfaces/contact.type";
+import type { Contact } from "../interfaces/contact.interface";
 
 //* Mock data con la que inicia la aplicación
 export const initialContacts: Contact[] = [

@@ -1,5 +1,5 @@
 import { FaTrash } from "react-icons/fa";
-import type { Contact } from "../interfaces/contact.type";
+import type { Contact } from "../interfaces/contact.interface";
 
 interface Props {
   contacts: Contact[];

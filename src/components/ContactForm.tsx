@@ -1,8 +1,12 @@
 import { FaPhoneAlt, FaUser } from "react-icons/fa";
 
-export const ContactForm = () => {
+interface Props {
+  addContact: (e: React.SubmitEvent<HTMLFormElement>) => void;
+}
+
+export const ContactForm = ({ addContact }: Props) => {
   return (
-    <form className="flex flex-col gap-4">
+    <form className="flex flex-col gap-4" onSubmit={addContact}>
       <h2 className="text-2xl font-semibold">Agregar Contacto</h2>
 
       {/* Nombre */}
@@ -10,7 +14,7 @@ export const ContactForm = () => {
         <span className="label">
           <FaUser /> Nombre
         </span>
-        <input type="text" placeholder="Tu Nombre" />
+        <input type="text" placeholder="Tu Nombre" name="name" />
       </label>
 
       {/* Telefono */}
@@ -18,7 +22,7 @@ export const ContactForm = () => {
         <span className="label">
           <FaPhoneAlt /> Teléfono
         </span>
-        <input type="tel" placeholder="Tu Teléfono" />
+        <input type="tel" placeholder="Tu Teléfono" name="phone" />
       </label>
 
       <button type="submit" className="btn">
