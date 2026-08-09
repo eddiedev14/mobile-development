@@ -1,26 +1,13 @@
-import { useEffect, useState } from "react";
 import { PageHeader } from "../components/PageHeader";
 import { ContactForm } from "../components/ContactForm";
 import { ContactList } from "../components/ContactList";
-import { useContacts } from "../hooks/useContacts";
+import { useContactsApp } from "../hooks/useContactsApp";
 
 export const ContactsApp = () => {
-  //* States
-  const [loading, setLoading] = useState(true);
-
-  //* Effects
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-
-    return () => clearTimeout(timeout);
-  }, []);
-
   //* Custom Hooks
-  const { contacts, addContact } = useContacts();
+  const { loading, contacts, handleSubmit, showDeleteConfirmDialog } =
+    useContactsApp();
 
-  // Mostrar el loader con ayuda de las clases de Daisy UI
   if (loading) {
     return (
       <div className="min-h-dvh flex items-center justify-center">
@@ -41,8 +28,11 @@ export const ContactsApp = () => {
       />
 
       <main className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <ContactForm addContact={addContact} />
-        <ContactList contacts={contacts} />
+        <ContactForm onSubmit={handleSubmit} />
+        <ContactList
+          contacts={contacts}
+          onDeleteClick={showDeleteConfirmDialog}
+        />
       </main>
     </div>
   );
