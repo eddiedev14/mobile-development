@@ -1,35 +1,15 @@
-# Desarrollo de Software para Plataformas Móviles
+# Challenge 01: Contacts App
 
-![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)
-![Ionic](https://img.shields.io/badge/Ionic-8-3880FF?style=for-the-badge&logo=ionic&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+Build a React app that allows you to **list, add, and delete contacts**, simulating _initial data loading_, using the basic concepts that will later be used in Ionic.
 
-Repositorio académico correspondiente a la asignatura **Desarrollo de Software para Plataformas Móviles** de la carrera de **Ingeniería Informática**.
+✓ Display a **loader** on startup
 
-En este repositorio se recopilan los diferentes **challenges, parciales y trabajos prácticos** desarrollados a lo largo del semestre, aplicando conceptos relacionados con el desarrollo de aplicaciones para plataformas móviles.
+✓ Load an initial contact list
 
-Los proyectos hacen uso principalmente de **React** e **Ionic**, junto con tecnologías y herramientas complementarias como **TypeScript** y **Vite**.
+✓ Allow users to **add contacts** with name and phone.
 
-## Contenido
+✓ Allow users to **delete contacts**
 
-El repositorio contiene los diferentes ejercicios y proyectos desarrollados durante la asignatura, incluyendo:
+✓ Divide the app into components
 
-- Challenges y ejercicios prácticos
-- Parciales de la asignatura
-- Trabajos y proyectos desarrollados durante el semestre
-- Implementaciones utilizando React e Ionic
-
-## Autor
-
-**Eddie Santiago Delgado Campo**
-
-Código: 2235060
-
----
-
-<p align="center">
-  Universidad Autónoma de Occidente<br>
-  Ingeniería Informática<br>
-  Desarrollo de Software para Plataformas Móviles
-</p>
+> Eddie Santiago Delgado Campo - 2235060
