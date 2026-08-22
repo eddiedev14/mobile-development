@@ -1,15 +1,17 @@
-# Challenge 01: Contacts App
+# Challenge 02: PWA Contacts App
 
-Build a React app that allows you to **list, add, and delete contacts**, simulating _initial data loading_, using the basic concepts that will later be used in Ionic.
+Based on the React app from the Challenge 01:
 
-✓ Display a **loader** on startup
+✓ Add one image to your parent component
 
-✓ Load an initial contact list
+✓ Transform it into a PWA using Hybrid Strategy
 
-✓ Allow users to **add contacts** with name and phone.
+✓ Add a custom icon
 
-✓ Allow users to **delete contacts**
+✓ Deploy the PWA in Netlify
 
-✓ Divide the app into components
+✓ Add the Netlify Link to the Readme.md and describe how to install the app in the cellphone
+
+# Live Demo and How to install the PWA
 
 > Eddie Santiago Delgado Campo - 2235060
