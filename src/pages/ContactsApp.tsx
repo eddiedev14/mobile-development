@@ -1,3 +1,4 @@
+import Logo from "/logo.webp";
 import { PageHeader } from "../components/PageHeader";
 import { ContactForm } from "../components/ContactForm";
 import { ContactList } from "../components/ContactList";
@@ -21,7 +22,9 @@ export const ContactsApp = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto py-8 flex flex-col gap-8">
+    <div className="max-w-5xl mx-auto py-24 flex flex-col gap-8">
+      <img src={Logo} className="absolute top-0 left-24 w-64" />
+
       <PageHeader
         title="Contacts App"
         paragraph="Aplicación de lista de contactos - Challenge 01"
