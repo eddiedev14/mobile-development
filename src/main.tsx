@@ -10,3 +10,14 @@ createRoot(document.getElementById("root")!).render(
     <ContactsApp />
   </StrictMode>,
 );
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/service-worker.js")
+      .then(() => console.log("Service Worker Registrado"))
+      .catch((err) =>
+        console.error("Error registrando el Service Worker", err),
+      );
+  });
+}
