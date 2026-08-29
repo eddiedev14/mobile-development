@@ -5,7 +5,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-const Home: React.FC = () => {
+const Home = () => {
   return (
     <IonPage>
       <IonHeader>
