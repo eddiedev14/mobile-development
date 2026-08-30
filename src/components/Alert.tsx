@@ -1,11 +1,9 @@
 import { IonAlert } from "@ionic/react";
+import { useTaskie } from "../hooks/useTaskie";
 import { useAlert } from "../hooks/useAlert";
 
-interface Props {
-  onConfirm: (id: number) => void;
-}
-
-const Alert = ({ onConfirm }: Props) => {
+const Alert = () => {
+  const { onConfirmDeleteAlert } = useTaskie();
   const { isOpen, alertData, closeAlert } = useAlert();
 
   return (
@@ -13,7 +11,7 @@ const Alert = ({ onConfirm }: Props) => {
       isOpen={isOpen}
       onDidDismiss={closeAlert}
       header="¿Estás Seguro?"
-      message={`Si continúas, tu contacto '${alertData.name ?? ""}' será eliminado de tu lista de contactos`}
+      message={`Si continúas, tu tarea '${alertData.name ?? ""}' será eliminada.`}
       buttons={[
         {
           text: "Cancelar",
@@ -24,7 +22,7 @@ const Alert = ({ onConfirm }: Props) => {
           role: "confirm",
           handler: () => {
             if (alertData.id && alertData.name) {
-              onConfirm(alertData.id);
+              onConfirmDeleteAlert(alertData.id);
             }
           },
         },
