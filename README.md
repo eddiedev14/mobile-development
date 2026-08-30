@@ -1,4 +1,4 @@
-# Practice 01: Contacts App in Ionic
+# Challenge 03: Taskie App in Ionic
 
 Create a new Task Manager app in ionic. It should contain:
 
