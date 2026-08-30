@@ -1,11 +1,17 @@
 # Practice 01: Contacts App in Ionic
 
-Once the environments is installed, let´s practice into ionic. Based on the React app from the Challenge 01:
+Create a new Task Manager app in ionic. It should contain:
 
-✓ It’s not necessary to uninstall your PWA
+✓ States and effects, if it’s necessary.
 
-✓ Let’s migrate your app to ionic using only ionic components
+✓ Child and parent components – at least 3 components.
 
-✓ Verify that the app continues working, installing it in your phone.
+✓ View a task list
+
+✓ Add new tasks
+
+✓ Mark tasks as completed
+
+✓ Delete tasks
 
 > Eddie Santiago Delgado Campo - 2235060
