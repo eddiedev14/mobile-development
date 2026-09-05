@@ -3,7 +3,7 @@ import { addCircleOutline, callOutline } from "ionicons/icons";
 
 const AppTabs = () => {
   return (
-    <IonTabBar slot="bottom">
+    <IonTabBar slot="bottom" className="pb-[env(safe-area-inset-bottom)]">
       <IonTabButton tab="home" href="/">
         <IonIcon icon={addCircleOutline} />
         <IonLabel>Formulario</IonLabel>
