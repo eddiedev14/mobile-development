@@ -1,26 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { useAlert } from "./useAlert";
 import { PHONE_REGEX } from "../constants/regex.constant";
 import { initialContacts } from "../data/contacts.data";
 import type { Contact, ContactFormData } from "../interfaces/contact.interface";
 
-export const useContactsApp = () => {
-  //* States
-  const [loading, setLoading] = useState(true);
+export const useContactsState = () => {
   const [contacts, setContacts] = useState<Contact[]>(initialContacts);
 
   //* Contexts
   const { closeAlert } = useAlert();
-
-  //* Effects
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-
-    return () => clearTimeout(timeout);
-  }, []);
 
   //* Functions
   const addContact = (contact: Contact) => {
@@ -73,7 +62,6 @@ export const useContactsApp = () => {
   };
 
   return {
-    loading,
     contacts,
     handleSubmit,
     onConfirmDeleteAlert,

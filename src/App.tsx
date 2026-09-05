@@ -1,7 +1,13 @@
 import { Route } from "react-router-dom";
-import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
+import {
+  IonApp,
+  IonRouterOutlet,
+  IonTabs,
+  setupIonicReact,
+} from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import Contacts from "./pages/Contacts";
+import { FormPage, ListPage } from "./pages";
+import AppTabs from "./components/AppTabs";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -23,14 +29,21 @@ import "./theme/variables.css";
 
 setupIonicReact();
 
-const App = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
-        <Route path="/" element={<Contacts />} />
-      </IonRouterOutlet>
-    </IonReactRouter>
-  </IonApp>
-);
+const App = () => {
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Route path="/" element={<FormPage />} />
+            <Route path="/lista" element={<ListPage />} />
+          </IonRouterOutlet>
+
+          <AppTabs />
+        </IonTabs>
+      </IonReactRouter>
+    </IonApp>
+  );
+};
 
 export default App;
