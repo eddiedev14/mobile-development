@@ -1,28 +1,18 @@
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-} from "@ionic/react";
-
+import { IonPage, IonContent } from "@ionic/react";
+import AppHeader from "../components/AppHeader";
 import ContactForm from "../components/ContactForm";
 import Loader from "../components/Loader";
 import { useLoader } from "../hooks/useLoader";
-import { useContacts } from "../hooks/useContacts";
+import { useContactForm } from "../hooks/contacts/useContactForm";
 
 const FormPage = () => {
-  const { handleSubmit } = useContacts();
+  const { handleSubmit } = useContactForm();
   const { loading } = useLoader();
   if (loading) return <Loader />;
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle className="ml-8">Contacts App</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <AppHeader />
       <IonContent fullscreen>
         <main className="max-w-5xl mx-auto p-8 flex flex-col">
           <ContactForm onSubmit={handleSubmit} />

@@ -1,26 +1,11 @@
-import { useState } from "react";
 import { toast } from "react-toastify";
-import { useAlert } from "./useAlert";
-import { PHONE_REGEX } from "../constants/regex.constant";
-import { initialContacts } from "../data/contacts.data";
-import type { Contact, ContactFormData } from "../interfaces/contact.interface";
+import { PHONE_REGEX } from "../../constants/regex.constant";
+import { ContactFormData, Contact } from "../../interfaces/contact.interface";
+import { useContacts } from "./useContacts";
 
-export const useContactsState = () => {
-  const [contacts, setContacts] = useState<Contact[]>(initialContacts);
-
+export const useContactForm = () => {
   //* Contexts
-  const { closeAlert } = useAlert();
-
-  //* Functions
-  const addContact = (contact: Contact) => {
-    setContacts((prev) => [...prev, contact]);
-  };
-
-  const removeContact = (deleteId: number) => {
-    setContacts((prev) =>
-      [...prev].filter((contact) => contact.id !== deleteId),
-    );
-  };
+  const { addContact } = useContacts();
 
   //* Handlers
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -55,15 +40,7 @@ export const useContactsState = () => {
     form.reset();
   };
 
-  const onConfirmDeleteAlert = (id: number) => {
-    removeContact(id);
-    closeAlert();
-    toast.success("Contacto eliminado correctamente.");
-  };
-
   return {
-    contacts,
     handleSubmit,
-    onConfirmDeleteAlert,
   };
 };

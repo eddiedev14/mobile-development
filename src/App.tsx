@@ -1,4 +1,3 @@
-import { Route } from "react-router-dom";
 import {
   IonApp,
   IonRouterOutlet,
@@ -6,8 +5,13 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { FormPage, ListPage } from "./pages";
+import { Navigate, Route } from "react-router-dom";
+import { useAuth } from "./hooks/auth/useAuth";
+import { FormPage, ListPage, Login } from "./pages";
+import Alert from "./components/Alert";
 import AppTabs from "./components/AppTabs";
+import GuestOnlyRoute from "./router/GuestOnlyRoute";
+import PrivateRoute from "./router/PrivateRoute";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -30,16 +34,47 @@ import "./theme/variables.css";
 setupIonicReact();
 
 const App = () => {
+  const { logged } = useAuth();
+
   return (
     <IonApp>
       <IonReactRouter>
         <IonTabs>
+          {/* IonRouterOutlet only discovers <Route> elements that are its direct children */}
           <IonRouterOutlet>
-            <Route path="/" element={<FormPage />} />
-            <Route path="/lista" element={<ListPage />} />
+            {/* Auth Routes */}
+            <Route
+              path="/login"
+              element={
+                <GuestOnlyRoute>
+                  <Login />
+                </GuestOnlyRoute>
+              }
+            />
+
+            {/* Private Routes */}
+            <Route
+              path="/form"
+              element={
+                <PrivateRoute>
+                  <FormPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/lista"
+              element={
+                <PrivateRoute>
+                  <ListPage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </IonRouterOutlet>
 
-          <AppTabs />
+          <Alert />
+          {logged && <AppTabs />}
         </IonTabs>
       </IonReactRouter>
     </IonApp>

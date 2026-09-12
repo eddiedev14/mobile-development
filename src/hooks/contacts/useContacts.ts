@@ -1,5 +1,5 @@
 import { use } from "react";
-import { ContactsContext } from "../context/ContactsContext";
+import { ContactsContext } from "../../context/ContactsContext";
 
 export const useContacts = () => {
   const context = use(ContactsContext);

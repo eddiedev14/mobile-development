@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, ReactNode } from "react";
-import { useContactsState } from "../hooks/useContactsState";
+import { useContactsState } from "../hooks/contacts/useContactsState";
 
 interface IProvider {
   children: ReactNode;

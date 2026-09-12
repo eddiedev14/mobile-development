@@ -1,6 +1,6 @@
 import { IonButton, IonIcon, IonItem, IonList } from "@ionic/react";
 import { trashOutline } from "ionicons/icons";
-import { useAlert } from "../hooks/useAlert";
+import { useContactList } from "../hooks/contacts/useContactList";
 import type { Contact } from "../interfaces/contact.interface";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const ContactList = ({ contacts }: Props) => {
-  const { updateAlertData } = useAlert();
+  const { onDeleteContact } = useContactList();
 
   return (
     <IonList className="bg-base-300 rounded-md shadow-md">
@@ -22,7 +22,7 @@ const ContactList = ({ contacts }: Props) => {
             <div>
               <h3 className="text-lg font-semibold">{contact.name}</h3>
 
-              <p className="text-xs font-medium opacity-60 pb-4">
+              <p className="pb-4 text-xs font-medium opacity-60">
                 Teléfono: {contact.phone}
               </p>
             </div>
@@ -30,12 +30,7 @@ const ContactList = ({ contacts }: Props) => {
             <IonButton
               shape="round"
               color="danger"
-              onClick={() =>
-                updateAlertData({
-                  id: contact.id,
-                  name: contact.name,
-                })
-              }
+              onClick={() => onDeleteContact(contact.id, contact.name)}
             >
               <IonIcon slot="icon-only" icon={trashOutline} />
             </IonButton>

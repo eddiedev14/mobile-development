@@ -1,4 +1,5 @@
 export interface AlertData {
-  id: number | null;
-  name: string | null;
+  header: string;
+  message: string;
+  onConfirm: () => void;
 }
