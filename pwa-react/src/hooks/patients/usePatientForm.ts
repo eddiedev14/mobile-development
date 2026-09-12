@@ -46,6 +46,7 @@ export const usePatientForm = () => {
     };
 
     addPatient(patient);
+    form.reset();
     toast.success("Paciente creado correctamente!");
   };
 

@@ -7,8 +7,19 @@ export const usePatientState = () => {
     return patientStored ? JSON.parse(patientStored) : [];
   });
 
-  const [filteredPatients, setFilteredPatients] =
-    useState<Patient[]>(patients);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredPatients = patients.filter((patient) => {
+    const query = searchTerm.trim().toLowerCase();
+
+    if (query === "") return true;
+
+    return (
+      patient.name.toLowerCase().includes(query) ||
+      patient.lastname.toLowerCase().includes(query) ||
+      patient.cc.includes(query)
+    );
+  });
 
   const addPatient = (patient: Patient) => {
     setPatients((prev) => {
@@ -19,22 +30,7 @@ export const usePatientState = () => {
   };
 
   const filterPatients = (term: string) => {
-    const query = term.trim().toLowerCase();
-
-    if (query === "") {
-      setFilteredPatients(patients);
-      return;
-    }
-
-    const result = patients.filter((patient) => {
-      return (
-        patient.name.toLowerCase().includes(query) ||
-        patient.lastname.toLowerCase().includes(query) ||
-        patient.cc.includes(query)
-      );
-    });
-
-    setFilteredPatients(result);
+    setSearchTerm(term ?? "");
   };
 
   return {
