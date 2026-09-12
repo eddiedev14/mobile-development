@@ -1,11 +1,9 @@
-# Practice 01: Contacts App in Ionic
+# Practice 02: Contacts App in Pages (Routing)
 
-Once the environments is installed, let´s practice into ionic. Based on the React app from the Challenge 01:
+Based on the React app from the Practice 01:
 
-✓ It’s not necessary to uninstall your PWA
+✓ Create 2 new pages to create and show details from the contacts.
 
-✓ Let’s migrate your app to ionic using only ionic components
-
-✓ Verify that the app continues working, installing it in your phone.
+✓ Use new components from ionic to enhance the app.
 
 > Eddie Santiago Delgado Campo - 2235060
