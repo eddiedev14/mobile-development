@@ -1,17 +1,15 @@
-# Challenge 03: Taskie App in Ionic
+# Challenge 05: Taskie App with Firebase Login
 
-Create a new Task Manager app in ionic. It should contain:
+Transform the Tasks App to add firebase Login/Register, custom hooks and contexts. The app must contain:
 
-✓ States and effects, if it’s necessary.
+✓ Login, Register and Logout with **Firebase**
 
-✓ Child and parent components – at least 3 components.
+✓ Routing pages: **Login, Register, Tasks List, Add / Edit Task, Task Detail**
 
-✓ View a task list
+✓ Use one **context** to handle **Tasks** data through pages
 
-✓ Add new tasks
+✓ Use one different **context** to handle **login - register** data
 
-✓ Mark tasks as completed
-
-✓ Delete tasks
+✓ Use **custom hooks** to handle Firebase Logic
 
 > Eddie Santiago Delgado Campo - 2235060
