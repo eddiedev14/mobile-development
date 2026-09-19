@@ -1,7 +1,10 @@
+import { FirestoreDoc } from "../firebase/types/firestore.types";
+
 export interface Task {
-  id: number;
   name: string;
+  description: string;
   completed: boolean;
 }
 
-export type TaskFormData = Pick<Task, "name">;
+export type TaskDoc = FirestoreDoc<Task>;
+export type TaskFormData = Omit<Task, "completed">;

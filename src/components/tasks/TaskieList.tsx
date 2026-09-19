@@ -7,11 +7,11 @@ import {
 } from "@ionic/react";
 import { trashOutline } from "ionicons/icons";
 import { useTaskie } from "../../hooks/tasks/useTaskie";
-import { useAlert } from "../../hooks/alert/useAlert";
+import { useTaskieList } from "../../hooks/tasks/useTaskieList";
 
 const TaskieList = () => {
   const { tasks, totalTasks, totalCompleted, toggleComplete } = useTaskie();
-  const { updateAlertData } = useAlert();
+  const { openDeleteAlert } = useTaskieList();
 
   return (
     <IonList className="bg-base-300 rounded-md shadow-md">
@@ -42,12 +42,7 @@ const TaskieList = () => {
                 shape="round"
                 color="danger"
                 className="size-8 flex items-center justify-center"
-                onClick={() =>
-                  updateAlertData({
-                    id: task.id,
-                    name: task.name,
-                  })
-                }
+                onClick={() => openDeleteAlert(task)}
               >
                 <IonIcon slot="icon-only" icon={trashOutline} />
               </IonButton>

@@ -1,8 +1,8 @@
 import { IonButton, IonInput, IonItem, IonList } from "@ionic/react";
-import { useTaskie } from "../../hooks/tasks/useTaskie";
+import { useTaskieForm } from "../../hooks/tasks/useTaskieForm";
 
 const TaskieForm = () => {
-  const { handleSubmit } = useTaskie();
+  const { handleSubmit } = useTaskieForm();
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -16,6 +16,15 @@ const TaskieForm = () => {
             label="Nombre"
             labelPlacement="floating"
             placeholder="e.g. Estudiar"
+          ></IonInput>
+        </IonItem>
+
+        <IonItem>
+          <IonInput
+            name="description"
+            label="Descripción"
+            labelPlacement="floating"
+            placeholder="e.g. Estudiar Ionic para mejorar mis habilidades"
           ></IonInput>
         </IonItem>
       </IonList>

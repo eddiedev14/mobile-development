@@ -1,70 +1,53 @@
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { initialTasks } from "../../data/tasks.data";
-import { useAlert } from "../alert/useAlert";
-import { Task, TaskFormData } from "../../interfaces/task.interface";
+import { useEffect } from "react";
+import { useCollection } from "../../firebase/hooks/useCollection";
+import { useAuth } from "../auth/useAuth";
+import { Task } from "../../interfaces/task.interface";
 
 export const useTaskieState = () => {
-  //* States
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  //* Collection hook
+  const { user } = useAuth();
+  const userId = user?.id;
+  const {
+    results: tasks,
+    isPending,
+    add,
+    suscribe,
+    update,
+    remove,
+  } = useCollection<Task>(`users/${userId}/tasks`);
 
-  //* Contexts
-  const { closeAlert } = useAlert();
+  //* Effects
+  useEffect(() => {
+    if (!userId) return;
+    return suscribe();
+  }, [suscribe, userId]);
 
   //* Functions
-  const addTask = (task: Task) => {
-    setTasks((prev) => [...prev, task]);
+  const addTask = async (task: Task): Promise<string | null> => {
+    const taskId = await add(task);
+    return taskId ? null : "Hubo un error añadiendo la tarea";
   };
 
-  const toggleComplete = (id: number) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task,
-      ),
-    );
+  const toggleComplete = async (id: string): Promise<string | null> => {
+    const current = tasks.find((task) => task.id === id);
+    if (!current) return "Tarea no encontrada";
+
+    const success = await update(id, { completed: !current.completed });
+    return success ? null : "Hubo un error actualizando la tarea";
   };
 
-  const removeTask = (id: number) => {
-    setTasks((prev) => [...prev].filter((task) => task.id !== id));
-  };
-
-  //* Handlers
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-
-    // Obtener valore del form con formData
-    const { name } = Object.fromEntries(new FormData(form)) as TaskFormData;
-
-    // Validar datos vacíos
-    if (name.trim() === "") {
-      toast.error("El nombre de la tarea es obligatorio");
-      return;
-    }
-
-    const task: Task = {
-      id: Date.now(),
-      name,
-      completed: false,
-    };
-
-    addTask(task);
-    toast.success("Tarea agregada correctamente.");
-    form.reset();
-  };
-
-  const onConfirmDeleteAlert = (id: number) => {
-    removeTask(id);
-    closeAlert();
-    toast.success("Tarea eliminada correctamente.");
+  const removeTask = async (id: string): Promise<string | null> => {
+    const success = await remove(id);
+    return success ? null : "Hubo un error eliminando la tarea";
   };
 
   return {
     tasks,
+    isPending,
     totalTasks: tasks.length,
     totalCompleted: tasks.filter((task) => task.completed).length,
-    handleSubmit,
+    addTask,
     toggleComplete,
-    onConfirmDeleteAlert,
+    removeTask,
   };
 };

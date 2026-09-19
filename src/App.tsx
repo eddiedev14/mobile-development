@@ -26,7 +26,7 @@ import "@ionic/react/css/palettes/dark.system.css";
 import "./theme/variables.css";
 
 import GuestOnlyRoute from "./router/GuestOnlyRoute";
-import { AuthPage, ListPage } from "./pages";
+import { AuthPage, FormPage, ListPage } from "./pages";
 import PrivateRoute from "./router/PrivateRoute";
 import AppTabs from "./components/shared/AppTabs";
 import Alert from "./components/shared/Alert";
@@ -62,6 +62,15 @@ const App = () => {
             />
 
             {/* Protected Routes */}
+            <Route
+              path="/new"
+              element={
+                <PrivateRoute>
+                  <FormPage />
+                </PrivateRoute>
+              }
+            />
+
             <Route
               path="/list"
               element={
