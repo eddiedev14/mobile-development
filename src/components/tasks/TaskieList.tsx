@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
   IonButton,
   IonCheckbox,
@@ -5,13 +6,14 @@ import {
   IonItem,
   IonList,
 } from "@ionic/react";
-import { trashOutline } from "ionicons/icons";
+import { createOutline, trashOutline } from "ionicons/icons";
 import { useTaskie } from "../../hooks/tasks/useTaskie";
 import { useTaskieList } from "../../hooks/tasks/useTaskieList";
 
 const TaskieList = () => {
   const { tasks, totalTasks, totalCompleted, toggleComplete } = useTaskie();
   const { openDeleteAlert } = useTaskieList();
+  const navigate = useNavigate();
 
   return (
     <IonList className="bg-base-300 rounded-md shadow-md">
@@ -28,15 +30,29 @@ const TaskieList = () => {
       </IonItem>
 
       {tasks.map((task) => (
-        <IonItem key={task.id} routerLink={`/tasks/${task.id}`}>
+        <IonItem key={task.id}>
           <div className="flex w-full items-center justify-between">
-            <h3 className="text-sm font-medium w-96 truncate">{task.name}</h3>
+            <span
+              className="text-sm font-medium w-96 truncate cursor-pointer hover:underline"
+              onClick={() => navigate(`/tasks/${task.id}`)}
+            >
+              {task.name}
+            </span>
 
             <div className="flex items-center gap-4">
               <IonCheckbox
                 checked={task.completed}
                 onIonChange={() => toggleComplete(task.id)}
               ></IonCheckbox>
+
+              <IonButton
+                shape="round"
+                color="primary"
+                className="size-8 flex items-center justify-center"
+                routerLink={`/edit/${task.id}`}
+              >
+                <IonIcon slot="icon-only" icon={createOutline} />
+              </IonButton>
 
               <IonButton
                 shape="round"

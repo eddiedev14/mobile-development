@@ -71,6 +71,14 @@ const App = () => {
               }
             />
             <Route
+              path="/edit/:id"
+              element={
+                <PrivateRoute>
+                  <FormPage isEdit />
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="/tasks"
               element={
                 <PrivateRoute>

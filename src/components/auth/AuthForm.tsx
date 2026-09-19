@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   IonButton,
   IonInput,
@@ -77,6 +78,24 @@ export const AuthForm = ({ isSignup }: Props) => {
             "Iniciar Sesión"
           )}
         </IonButton>
+
+        <p className="text-sm font-light text-center">
+          {isSignup ? (
+            <>
+              ¿Ya tienes una cuenta?{" "}
+              <Link to="/login" className="text-primary">
+                Inicia sesión
+              </Link>
+            </>
+          ) : (
+            <>
+              ¿Aún no tienes una cuenta?{" "}
+              <Link to="/signup" className="text-primary">
+                Regístrate
+              </Link>
+            </>
+          )}
+        </p>
       </form>
     </main>
   );

@@ -36,6 +36,14 @@ export const useTaskieState = () => {
     return success ? null : "Hubo un error actualizando la tarea";
   };
 
+  const updateTask = async (
+    id: string,
+    data: Partial<Task>,
+  ): Promise<string | null> => {
+    const success = await update(id, data);
+    return success ? null : "Hubo un error actualizando la tarea";
+  };
+
   const removeTask = async (id: string): Promise<string | null> => {
     const success = await remove(id);
     return success ? null : "Hubo un error eliminando la tarea";
@@ -48,6 +56,7 @@ export const useTaskieState = () => {
     totalCompleted: tasks.filter((task) => task.completed).length,
     addTask,
     toggleComplete,
+    updateTask,
     removeTask,
   };
 };
