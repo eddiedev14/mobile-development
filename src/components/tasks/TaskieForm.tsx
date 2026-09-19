@@ -1,5 +1,5 @@
 import { IonButton, IonInput, IonItem, IonList } from "@ionic/react";
-import { useTaskie } from "../hooks/useTaskie";
+import { useTaskie } from "../../hooks/tasks/useTaskie";
 
 const TaskieForm = () => {
   const { handleSubmit } = useTaskie();

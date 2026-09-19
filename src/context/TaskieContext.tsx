@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, ReactNode } from "react";
-import { useTaskieState } from "../hooks/useTaskieState";
+import { useTaskieState } from "../hooks/tasks/useTaskieState";
 
 interface IProvider {
   children: ReactNode;

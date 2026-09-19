@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, ReactNode } from "react";
-import { useAlertState } from "../hooks/useAlertState";
+import { useAlertState } from "../hooks/alert/useAlertState";
 
 interface IProvider {
   children: ReactNode;

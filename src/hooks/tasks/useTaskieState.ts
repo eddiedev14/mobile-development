@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useAlert } from "./useAlert";
-import { initialTasks } from "../data/tasks.data";
-import { Task, TaskFormData } from "../interfaces/task.interface";
+import { initialTasks } from "../../data/tasks.data";
+import { useAlert } from "../alert/useAlert";
+import { Task, TaskFormData } from "../../interfaces/task.interface";
 
 export const useTaskieState = () => {
   //* States

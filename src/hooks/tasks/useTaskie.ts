@@ -1,5 +1,5 @@
 import { use } from "react";
-import { TaskieContext } from "../context/TaskieContext";
+import { TaskieContext } from "../../context/TaskieContext";
 
 export const useTaskie = () => {
   const context = use(TaskieContext);

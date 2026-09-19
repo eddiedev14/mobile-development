@@ -6,8 +6,8 @@ import {
   IonList,
 } from "@ionic/react";
 import { trashOutline } from "ionicons/icons";
-import { useTaskie } from "../hooks/useTaskie";
-import { useAlert } from "../hooks/useAlert";
+import { useTaskie } from "../../hooks/tasks/useTaskie";
+import { useAlert } from "../../hooks/alert/useAlert";
 
 const TaskieList = () => {
   const { tasks, totalTasks, totalCompleted, toggleComplete } = useTaskie();

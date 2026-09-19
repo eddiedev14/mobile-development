@@ -1,7 +1,11 @@
-import { Route } from "react-router-dom";
-import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
+import { Navigate, Route } from "react-router-dom";
+import {
+  IonApp,
+  IonRouterOutlet,
+  IonTabs,
+  setupIonicReact,
+} from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import Taskie from "./pages/Taskie";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -21,16 +25,61 @@ import "@ionic/react/css/display.css";
 import "@ionic/react/css/palettes/dark.system.css";
 import "./theme/variables.css";
 
+import GuestOnlyRoute from "./router/GuestOnlyRoute";
+import { AuthPage, ListPage } from "./pages";
+import PrivateRoute from "./router/PrivateRoute";
+import AppTabs from "./components/shared/AppTabs";
+import Alert from "./components/shared/Alert";
+import { useAuth } from "./hooks/auth/useAuth";
+
 setupIonicReact();
 
-const App = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
-        <Route path="/" element={<Taskie />} />
-      </IonRouterOutlet>
-    </IonReactRouter>
-  </IonApp>
-);
+const App = () => {
+  const { user } = useAuth();
+
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <IonTabs>
+          <IonRouterOutlet>
+            {/* Auth Routes */}
+            <Route
+              path="/login"
+              element={
+                <GuestOnlyRoute>
+                  <AuthPage />
+                </GuestOnlyRoute>
+              }
+            />
+
+            <Route
+              path="/signup"
+              element={
+                <GuestOnlyRoute>
+                  <AuthPage isSignup />
+                </GuestOnlyRoute>
+              }
+            />
+
+            {/* Protected Routes */}
+            <Route
+              path="/list"
+              element={
+                <PrivateRoute>
+                  <ListPage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </IonRouterOutlet>
+
+          <Alert />
+          {user && <AppTabs />}
+        </IonTabs>
+      </IonReactRouter>
+    </IonApp>
+  );
+};
 
 export default App;
