@@ -7,7 +7,7 @@ interface Props {
 
 const GuestOnlyRoute = ({ children }: Props) => {
   const { user } = useAuth();
-  return user ? <Navigate to="/list" replace /> : children;
+  return user ? <Navigate to="/tasks" replace /> : children;
 };
 
 export default GuestOnlyRoute;

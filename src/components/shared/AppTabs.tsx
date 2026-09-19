@@ -9,7 +9,7 @@ const AppTabs = () => {
         <IonLabel>Agregar</IonLabel>
       </IonTabButton>
 
-      <IonTabButton tab="list" href="/list">
+      <IonTabButton tab="tasks" href="/tasks">
         <IonIcon icon={listOutline} />
         <IonLabel>Lista</IonLabel>
       </IonTabButton>

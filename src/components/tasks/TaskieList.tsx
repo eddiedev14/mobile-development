@@ -28,7 +28,7 @@ const TaskieList = () => {
       </IonItem>
 
       {tasks.map((task) => (
-        <IonItem key={task.id}>
+        <IonItem key={task.id} routerLink={`/tasks/${task.id}`}>
           <div className="flex w-full items-center justify-between">
             <h3 className="text-sm font-medium w-96 truncate">{task.name}</h3>
 
