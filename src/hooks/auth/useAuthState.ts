@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 import { auth } from "../../firebase/config";
 import { useCollection } from "../../firebase/hooks/useCollection";
 import {
+  browserSessionPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  setPersistence,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
@@ -53,12 +55,24 @@ export default function useAuthState() {
   const { setById, suscribeById } = useCollection<User>("users");
 
   //* Effects
-  //? Authenticate the user when their session status changes
+  useEffect(() => {
+    setPersistence(auth, browserSessionPersistence).catch(() => {});
+  }, []);
+
   useEffect(() => {
     let unsubscribeDoc = () => {};
+    let isFirstNotification = true;
 
     const unsubscribeAuth = onAuthStateChanged(auth, (fbUser) => {
       unsubscribeDoc();
+
+      const forceLogout = fbUser && isFirstNotification;
+      isFirstNotification = false;
+
+      if (forceLogout) {
+        signOut(auth).catch(() => {});
+        return; //? el propio signOut dispara una nueva notificación, ya con null
+      }
 
       if (!fbUser) {
         setUser(null);
@@ -73,7 +87,13 @@ export default function useAuthState() {
         //? datos de la sesión, en lugar de dejar `user` en null para siempre
         //? (eso dejaba al usuario atrapado en el loader y además lo expulsaba
         //? a /login en cada carga de la app)
-        setUser(userDoc ?? { id: fbUser.uid, email: fbUser.email ?? "", username: "" });
+        setUser(
+          userDoc ?? {
+            id: fbUser.uid,
+            email: fbUser.email ?? "",
+            username: "",
+          },
+        );
         setUserLoading(false);
       });
     });

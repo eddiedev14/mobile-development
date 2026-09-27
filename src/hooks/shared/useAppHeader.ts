@@ -4,8 +4,14 @@ import { useAuth } from "../auth/useAuth";
 export const useAppHeader = () => {
   const { logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    const error = await logout();
+
+    if (error) {
+      toast.error(error);
+      return;
+    }
+
     toast.success("Sesión cerrada correctamente.");
   };
 

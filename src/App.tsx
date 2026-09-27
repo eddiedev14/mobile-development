@@ -37,6 +37,7 @@ import {
 } from "./pages";
 import AppTabs from "./components/shared/AppTabs";
 import Alert from "./components/shared/Alert";
+import ConnectionGuard from "./components/shared/ConnectionGuard";
 import { Loader } from "./components/shared/Loader";
 import { useAuth } from "./hooks/auth/useAuth";
 
@@ -64,19 +65,17 @@ const AppRoutes = () => {
   const navigate = useNavigate();
 
   const isAuthRoute = AUTH_ROUTES.includes(pathname);
-
-  //? Mientras Firebase Auth resuelve la sesión NO se decide nada: `user` es null
-  //? hasta que llega el documento de Firestore, y durante ese tiempo una ruta
-  //? protegida parecería "no autenticada" (p. ej. al recargar /fruits/edit/1,
-  //? el usuario saltaba a /login y luego a "/"). Se espera con el loader.
   const isRedirecting = !userLoading && (user ? isAuthRoute : !isAuthRoute);
-  const showLoader = userLoading || isRedirecting;
 
   useEffect(() => {
     if (isRedirecting) {
       navigate(user ? "/" : "/login", { replace: true });
     }
   }, [isRedirecting, navigate, user]);
+
+  if (userLoading || isRedirecting) {
+    return <RedirectLoader />;
+  }
 
   //? Las tabs principales sólo se muestran en la página de inicio,
   //? ya que cada app se abre como una página nueva (con botón de "atrás")
@@ -86,50 +85,40 @@ const AppRoutes = () => {
     <IonTabs>
       <IonRouterOutlet>
         {/* Auth Routes */}
-        <Route
-          path="/login"
-          element={showLoader ? <RedirectLoader /> : <AuthPage />}
-        />
-
-        <Route
-          path="/signup"
-          element={showLoader ? <RedirectLoader /> : <AuthPage isSignup />}
-        />
+        <Route path="/login" element={<AuthPage />} />
+        <Route path="/signup" element={<AuthPage isSignup />} />
 
         {/* Protected Routes */}
-        <Route
-          path="/"
-          element={showLoader ? <RedirectLoader /> : <HomePage />}
-        />
+        <Route path="/" element={<HomePage />} />
 
         {/* Cada app se monta con un splat para que sus sub-rutas
             (/contacts/list, /tasks/new, etc.) queden dentro de su alcance */}
+        {/* Tasks y Contacts necesitan internet: el guard muestra la pantalla de
+            aviso si se entra sin conexión o si se cae estando dentro.
+            Fruits se queda fuera porque funciona con IndexedDB (local) */}
         <Route
           path="/contacts/*"
-          element={showLoader ? <RedirectLoader /> : <ContactsTabs />}
+          element={
+            <ConnectionGuard>
+              <ContactsTabs />
+            </ConnectionGuard>
+          }
         />
 
         <Route
           path="/tasks/*"
-          element={showLoader ? <RedirectLoader /> : <TasksTabs />}
+          element={
+            <ConnectionGuard>
+              <TasksTabs />
+            </ConnectionGuard>
+          }
         />
 
-        <Route
-          path="/fruits/*"
-          element={showLoader ? <RedirectLoader /> : <FruitsTabs />}
-        />
+        <Route path="/fruits/*" element={<FruitsTabs />} />
 
         <Route
           path="*"
-          element={
-            //? También espera a que la sesión esté resuelta: si no, una URL
-            //? inexistente abierta en caliente expulsaría a /login
-            showLoader ? (
-              <RedirectLoader />
-            ) : (
-              <Navigate to={user ? "/" : "/login"} replace />
-            )
-          }
+          element={<Navigate to={user ? "/" : "/login"} replace />}
         />
       </IonRouterOutlet>
 
