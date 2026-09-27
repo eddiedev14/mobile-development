@@ -1,15 +1,13 @@
-# Challenge 05: Taskie App with Firebase Login
+# Challenge 06: Firebase Storage & Dexie
 
-Transform the Tasks App to add firebase Login/Register, custom hooks and contexts. The app must contain:
+1. Implement a new app in Ionic with real login and routes to handle, based on the previous challenges:
 
-✓ Login, Register and Logout with **Firebase**
+   a. Contacts in Firebase
 
-✓ Routing pages: **Login, Register, Tasks List, Add / Edit Task, Task Detail**
+   b. Tasks in Realtime
 
-✓ Use one **context** to handle **Tasks** data through pages
+   c. Fruits in Dexie
 
-✓ Use one different **context** to handle **login - register** data
-
-✓ Use **custom hooks** to handle Firebase Logic
+2. Valide if you have network connection, then enable or disable **Contacts and Tasks** actions depending on the network connection.
 
 > Eddie Santiago Delgado Campo - 2235060
