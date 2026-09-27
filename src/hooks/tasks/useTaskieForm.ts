@@ -44,7 +44,7 @@ export const useTaskieForm = (isEdit = false) => {
       }
 
       toast.success("Tarea actualizada correctamente.");
-      navigate("/tasks");
+      navigate("/tasks/list");
       return;
     }
 
@@ -63,6 +63,7 @@ export const useTaskieForm = (isEdit = false) => {
     toast.success("Tarea agregada correctamente.");
     setName("");
     setDescription("");
+    navigate("/tasks/list");
   };
 
   return {

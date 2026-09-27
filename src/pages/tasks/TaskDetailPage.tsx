@@ -1,21 +1,17 @@
 import { useParams } from "react-router-dom";
 import {
-  IonBackButton,
-  IonButtons,
   IonCheckbox,
   IonContent,
-  IonHeader,
   IonItem,
   IonLabel,
   IonList,
   IonPage,
   IonText,
-  IonTitle,
-  IonToolbar,
 } from "@ionic/react";
-import { useTaskie } from "../hooks/tasks/useTaskie";
+import PageHeader from "../../components/shared/PageHeader";
+import { useTaskie } from "../../hooks/tasks/useTaskie";
 
-const DetailPage = () => {
+const TaskDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const { tasks, toggleComplete } = useTaskie();
   const task = tasks.find((task) => task.id === id);
@@ -23,6 +19,7 @@ const DetailPage = () => {
   if (!task) {
     return (
       <IonPage>
+        <PageHeader title="Tareas" backHref="/" />
         <IonContent fullscreen>
           <div className="min-h-screen flex items-center justify-center">
             <IonText color="medium">
@@ -36,14 +33,7 @@ const DetailPage = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/list" />
-          </IonButtons>
-          <IonTitle>Detalle de Tarea</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <PageHeader title="Detalle de Tarea" backHref="/tasks/list" />
       <IonContent fullscreen>
         <main className="max-w-2xl mx-auto p-4">
           <h2 className="text-2xl font-semibold">{task.name}</h2>
@@ -70,4 +60,4 @@ const DetailPage = () => {
   );
 };
 
-export default DetailPage;
+export default TaskDetailPage;

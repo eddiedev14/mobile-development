@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useCollection } from "../../firebase/hooks/useCollection";
+import { useRealTimeCollection } from "../../firebase/hooks/useRTCollection";
 import { useAuth } from "../auth/useAuth";
 import { Task } from "../../interfaces/task.interface";
 
@@ -7,20 +6,15 @@ export const useTaskieState = () => {
   //* Collection hook
   const { user } = useAuth();
   const userId = user?.id;
+
+  //? En Realtime Database las tareas viven en "users/{uid}/tasks"
   const {
     results: tasks,
     isPending,
     add,
-    suscribe,
-    update,
-    remove,
-  } = useCollection<Task>(`users/${userId}/tasks`);
-
-  //* Effects
-  useEffect(() => {
-    if (!userId) return;
-    return suscribe();
-  }, [suscribe, userId]);
+    updateNode,
+    removeNode,
+  } = useRealTimeCollection<Task>(userId ? `users/${userId}/tasks` : "");
 
   //* Functions
   const addTask = async (task: Task): Promise<string | null> => {
@@ -32,7 +26,7 @@ export const useTaskieState = () => {
     const current = tasks.find((task) => task.id === id);
     if (!current) return "Tarea no encontrada";
 
-    const success = await update(id, { completed: !current.completed });
+    const success = await updateNode(id, { completed: !current.completed });
     return success ? null : "Hubo un error actualizando la tarea";
   };
 
@@ -40,12 +34,12 @@ export const useTaskieState = () => {
     id: string,
     data: Partial<Task>,
   ): Promise<string | null> => {
-    const success = await update(id, data);
+    const success = await updateNode(id, data);
     return success ? null : "Hubo un error actualizando la tarea";
   };
 
   const removeTask = async (id: string): Promise<string | null> => {
-    const success = await remove(id);
+    const success = await removeNode(id);
     return success ? null : "Hubo un error eliminando la tarea";
   };
 

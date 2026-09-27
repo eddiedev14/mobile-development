@@ -1,6 +1,7 @@
 import AuthPage from "./AuthPage";
-import DetailPage from "./DetailPage";
-import FormPage from "./FormPage";
-import ListPage from "./ListPage";
+import HomePage from "./HomePage";
+import ContactsTabs from "./contacts/ContactsTabs";
+import FruitsTabs from "./fruits/FruitsTabs";
+import TasksTabs from "./tasks/TasksTabs";
 
-export { AuthPage, FormPage, ListPage, DetailPage };
+export { AuthPage, HomePage, ContactsTabs, TasksTabs, FruitsTabs };

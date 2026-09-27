@@ -1,18 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import {
-  IonButton,
-  IonCheckbox,
-  IonIcon,
-  IonItem,
-  IonList,
-} from "@ionic/react";
+import { IonButton, IonIcon, IonItem, IonList } from "@ionic/react";
 import { createOutline, trashOutline } from "ionicons/icons";
-import { useTaskie } from "../../hooks/tasks/useTaskie";
-import { useTaskieList } from "../../hooks/tasks/useTaskieList";
+import { useFruits } from "../../hooks/fruits/useFruits";
+import { useFruitList } from "../../hooks/fruits/useFruitList";
 
-const TaskieList = () => {
-  const { tasks, totalTasks, totalCompleted, toggleComplete } = useTaskie();
-  const { openDeleteAlert } = useTaskieList();
+const FruitList = () => {
+  const { fruits, totalFruits } = useFruits();
+  const { openDeleteAlert } = useFruitList();
   const navigate = useNavigate();
 
   return (
@@ -20,36 +14,28 @@ const TaskieList = () => {
       <IonItem>
         <div className="flex flex-col items-start">
           <h2 className="text-lg font-semibold tracking-wide">
-            Lista de Tareas
+            Lista de Frutas
           </h2>
-          <p className="pb-2 text-sm">
-            Total: {totalTasks} | Completadas:{" "}
-            {`${totalCompleted}/${totalTasks}`}
-          </p>
+          <p className="pb-2 text-sm">Total: {totalFruits}</p>
         </div>
       </IonItem>
 
-      {tasks.map((task) => (
-        <IonItem key={task.id}>
+      {fruits.map((fruit) => (
+        <IonItem key={fruit.id}>
           <div className="flex w-full items-center justify-between">
-            <span
-              className="text-sm font-medium w-96 truncate cursor-pointer hover:underline"
-              onClick={() => navigate(`/tasks/${task.id}`)}
-            >
-              {task.name}
-            </span>
+            <div>
+              <h3 className="text-lg font-semibold">{fruit.name}</h3>
+              <p className="pb-4 text-xs font-medium opacity-60">
+                Color: {fruit.color}
+              </p>
+            </div>
 
             <div className="flex items-center gap-4">
-              <IonCheckbox
-                checked={task.completed}
-                onIonChange={() => toggleComplete(task.id)}
-              ></IonCheckbox>
-
               <IonButton
                 shape="round"
                 color="primary"
                 className="size-8 flex items-center justify-center"
-                routerLink={`/tasks/edit/${task.id}`}
+                onClick={() => navigate(`/fruits/edit/${fruit.id}`)}
               >
                 <IonIcon slot="icon-only" icon={createOutline} />
               </IonButton>
@@ -58,7 +44,7 @@ const TaskieList = () => {
                 shape="round"
                 color="danger"
                 className="size-8 flex items-center justify-center"
-                onClick={() => openDeleteAlert(task)}
+                onClick={() => openDeleteAlert(fruit)}
               >
                 <IonIcon slot="icon-only" icon={trashOutline} />
               </IonButton>
@@ -70,4 +56,4 @@ const TaskieList = () => {
   );
 };
 
-export default TaskieList;
+export default FruitList;

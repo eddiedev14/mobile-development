@@ -68,8 +68,12 @@ export default function useAuthState() {
 
       setUserLoading(true);
       unsubscribeDoc = suscribeById(fbUser.uid, (userDoc) => {
-        if (!userDoc) return;
-        setUser(userDoc);
+        //? Firebase Auth es la fuente de verdad: si el documento de Firestore no
+        //? existe (usuario creado desde la consola) se arma uno mínimo con los
+        //? datos de la sesión, en lugar de dejar `user` en null para siempre
+        //? (eso dejaba al usuario atrapado en el loader y además lo expulsaba
+        //? a /login en cada carga de la app)
+        setUser(userDoc ?? { id: fbUser.uid, email: fbUser.email ?? "", username: "" });
         setUserLoading(false);
       });
     });

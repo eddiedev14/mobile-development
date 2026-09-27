@@ -1,4 +1,5 @@
-import { IonButton, IonHeader, IonTitle, IonToolbar } from "@ionic/react";
+import { IonButton } from "@ionic/react";
+import PageHeader from "./PageHeader";
 import { useAppHeader } from "../../hooks/shared/useAppHeader";
 import { useAuth } from "../../hooks/auth/useAuth";
 
@@ -7,24 +8,19 @@ const AppHeader = () => {
   const { handleLogout } = useAppHeader();
 
   return (
-    <IonHeader>
-      <IonToolbar>
-        <div className="flex justify-between items-center px-8">
-          <IonTitle>Taskie</IonTitle>
-          <div className="flex gap-4">
-            <span>@{user?.username}</span>
-            <IonButton
-              onClick={handleLogout}
-              color="danger"
-              fill="outline"
-              size="small"
-            >
-              Cerrar Sesión
-            </IonButton>
-          </div>
-        </div>
-      </IonToolbar>
-    </IonHeader>
+    <PageHeader title="Challenge 06">
+      <div className="flex items-center gap-2 pr-6">
+        <span className="text-sm font-normal">@{user?.username}</span>
+        <IonButton
+          onClick={handleLogout}
+          color="danger"
+          fill="outline"
+          size="small"
+        >
+          Cerrar Sesión
+        </IonButton>
+      </div>
+    </PageHeader>
   );
 };
 

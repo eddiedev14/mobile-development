@@ -1,29 +1,22 @@
 import { IonButton, IonInput, IonItem, IonList } from "@ionic/react";
 import { Loader } from "../shared/Loader";
-import { useTaskieForm } from "../../hooks/tasks/useTaskieForm";
+import { useFruitForm } from "../../hooks/fruits/useFruitForm";
 
 interface Props {
   isEdit?: boolean;
 }
 
-const TaskieForm = ({ isEdit = false }: Props) => {
-  const {
-    handleSubmit,
-    name,
-    setName,
-    description,
-    setDescription,
-    isLoading,
-    task,
-  } = useTaskieForm(isEdit);
+const FruitForm = ({ isEdit = false }: Props) => {
+  const { name, color, fruit, isLoading, handleSubmit, setName, setColor } =
+    useFruitForm(isEdit);
 
   if (isLoading) return <Loader />;
 
-  if (isEdit && !task) {
+  if (isEdit && !fruit) {
     return (
       <div className="flex flex-col items-center gap-2 py-16">
-        <h2 className="text-2xl font-semibold">Editar Tarea</h2>
-        <p className="text-sm font-light">Tarea no encontrada.</p>
+        <h2 className="text-2xl font-semibold">Editar Fruta</h2>
+        <p className="text-sm font-light">Fruta no encontrada.</p>
       </div>
     );
   }
@@ -31,7 +24,7 @@ const TaskieForm = ({ isEdit = false }: Props) => {
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       <h2 className="text-2xl font-semibold">
-        {isEdit ? "Editar Tarea" : "Crear Tarea"}
+        {isEdit ? "Editar Fruta" : "Crear Fruta"}
       </h2>
 
       <IonList>
@@ -41,21 +34,21 @@ const TaskieForm = ({ isEdit = false }: Props) => {
             name="name"
             label="Nombre"
             labelPlacement="floating"
-            placeholder="e.g. Estudiar"
+            placeholder="e.g. Manzana"
             value={name}
             onIonInput={(e) => setName(e.detail.value ?? "")}
           ></IonInput>
         </IonItem>
 
-        {/* Descripción */}
+        {/* Color */}
         <IonItem>
           <IonInput
-            name="description"
-            label="Descripción"
+            name="color"
+            label="Color"
             labelPlacement="floating"
-            placeholder="e.g. Estudiar Ionic para mejorar mis habilidades"
-            value={description}
-            onIonInput={(e) => setDescription(e.detail.value ?? "")}
+            placeholder="e.g. Roja"
+            value={color}
+            onIonInput={(e) => setColor(e.detail.value ?? "")}
           ></IonInput>
         </IonItem>
       </IonList>
@@ -67,4 +60,4 @@ const TaskieForm = ({ isEdit = false }: Props) => {
   );
 };
 
-export default TaskieForm;
+export default FruitForm;
