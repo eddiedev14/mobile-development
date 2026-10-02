@@ -1,11 +1,9 @@
-import { FirestoreDoc } from "../firebase/types/firestore.types";
-
 export interface User {
   email: string;
   username: string;
 }
 
-export type UserDoc = FirestoreDoc<User>;
+export type UserDoc = User & { id: string };
 
 // Forms
 export type UserRegister = {

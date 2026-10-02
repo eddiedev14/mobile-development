@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 
 //* Firebase
 import { auth } from "../../firebase/config";
-import { useCollection } from "../../firebase/hooks/useCollection";
 import {
   browserSessionPersistence,
   createUserWithEmailAndPassword,
@@ -11,11 +10,11 @@ import {
   setPersistence,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 
 // * Types & utils
 import {
-  User,
   UserLogin,
   UserDoc,
   UserRegister,
@@ -51,21 +50,15 @@ export default function useAuthState() {
   const [user, setUser] = useState<UserDoc | null>(null);
   const [userLoading, setUserLoading] = useState(true);
 
-  //* Custom hooks
-  const { setById, suscribeById } = useCollection<User>("users");
-
   //* Effects
   useEffect(() => {
     setPersistence(auth, browserSessionPersistence).catch(() => {});
   }, []);
 
   useEffect(() => {
-    let unsubscribeDoc = () => {};
     let isFirstNotification = true;
 
     const unsubscribeAuth = onAuthStateChanged(auth, (fbUser) => {
-      unsubscribeDoc();
-
       const forceLogout = fbUser && isFirstNotification;
       isFirstNotification = false;
 
@@ -80,29 +73,19 @@ export default function useAuthState() {
         return;
       }
 
-      setUserLoading(true);
-      unsubscribeDoc = suscribeById(fbUser.uid, (userDoc) => {
-        //? Firebase Auth es la fuente de verdad: si el documento de Firestore no
-        //? existe (usuario creado desde la consola) se arma uno mínimo con los
-        //? datos de la sesión, en lugar de dejar `user` en null para siempre
-        //? (eso dejaba al usuario atrapado en el loader y además lo expulsaba
-        //? a /login en cada carga de la app)
-        setUser(
-          userDoc ?? {
-            id: fbUser.uid,
-            email: fbUser.email ?? "",
-            username: "",
-          },
-        );
-        setUserLoading(false);
+      //? Firebase Auth es la fuente de verdad: el username vive en displayName
+      setUser({
+        id: fbUser.uid,
+        email: fbUser.email ?? "",
+        username: fbUser.displayName ?? "",
       });
+      setUserLoading(false);
     });
 
     return () => {
-      unsubscribeDoc();
       unsubscribeAuth();
     };
-  }, [suscribeById]);
+  }, []);
 
   //* Functions
   const registerWithEmailAndPassword = async (
@@ -118,7 +101,8 @@ export default function useAuthState() {
         email,
         password,
       );
-      await setById(userCredential.user.uid, { email, username });
+      await updateProfile(userCredential.user, { displayName: username });
+      setUser({ id: userCredential.user.uid, email, username });
     } catch (err) {
       error = getAuthErrorMessage(err);
     }

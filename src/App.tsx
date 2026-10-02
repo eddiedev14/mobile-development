@@ -1,11 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, type ReactElement } from "react";
 import { Navigate, Route, useLocation, useNavigate } from "react-router-dom";
 import {
   IonApp,
   IonContent,
   IonPage,
   IonRouterOutlet,
-  IonTabs,
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
@@ -30,14 +29,16 @@ import "./theme/variables.css";
 
 import {
   AuthPage,
-  ContactsTabs,
-  FruitsTabs,
   HomePage,
-  TasksTabs,
+  GeolocationPage,
+  CameraPage,
+  MotionPage,
+  DevicePage,
+  HapticsPage,
+  FilesystemPage,
+  LocalNotificationsPage,
+  PushNotificationsPage,
 } from "./pages";
-import AppTabs from "./components/shared/AppTabs";
-import Alert from "./components/shared/Alert";
-import ConnectionGuard from "./components/shared/ConnectionGuard";
 import { Loader } from "./components/shared/Loader";
 import { useAuth } from "./hooks/auth/useAuth";
 
@@ -73,58 +74,60 @@ const AppRoutes = () => {
     }
   }, [isRedirecting, navigate, user]);
 
-  if (userLoading || isRedirecting) {
-    return <RedirectLoader />;
-  }
-
-  //? Las tabs principales sólo se muestran en la página de inicio,
-  //? ya que cada app se abre como una página nueva (con botón de "atrás")
-  const showAppTabs = user && pathname === "/";
+  //? El <IonRouterOutlet> debe permanecer siempre montado: si se reemplaza por
+  //? un loader mientras se redirige, al volver a montarlo Ionic no completa la
+  //? transición y la página entrante queda invisible (pantalla en blanco).
+  //? Por eso el loader se renderiza dentro de cada ruta, no en lugar del outlet.
+  const pending = userLoading || isRedirecting;
+  const guest = (page: ReactElement) => (pending ? <RedirectLoader /> : page);
+  const protectedPage = (page: ReactElement) =>
+    pending || !user ? <RedirectLoader /> : page;
 
   return (
-    <IonTabs>
-      <IonRouterOutlet>
-        {/* Auth Routes */}
-        <Route path="/login" element={<AuthPage />} />
-        <Route path="/signup" element={<AuthPage isSignup />} />
+    <IonRouterOutlet>
+      {/* Auth Routes */}
+      <Route path="/login" element={guest(<AuthPage />)} />
+      <Route path="/signup" element={guest(<AuthPage isSignup />)} />
 
-        {/* Protected Routes */}
-        <Route path="/" element={<HomePage />} />
+      {/* Protected Routes */}
+      <Route path="/" element={protectedPage(<HomePage />)} />
 
-        {/* Cada app se monta con un splat para que sus sub-rutas
-            (/contacts/list, /tasks/new, etc.) queden dentro de su alcance */}
-        {/* Tasks y Contacts necesitan internet: el guard muestra la pantalla de
-            aviso si se entra sin conexión o si se cae estando dentro.
-            Fruits se queda fuera porque funciona con IndexedDB (local) */}
-        <Route
-          path="/contacts/*"
-          element={
-            <ConnectionGuard>
-              <ContactsTabs />
-            </ConnectionGuard>
-          }
-        />
+      {/* Sensores de Capacitor */}
+      <Route
+        path="/sensors/geolocation"
+        element={protectedPage(<GeolocationPage />)}
+      />
+      <Route path="/sensors/camera" element={protectedPage(<CameraPage />)} />
+      <Route path="/sensors/motion" element={protectedPage(<MotionPage />)} />
+      <Route path="/sensors/device" element={protectedPage(<DevicePage />)} />
+      <Route
+        path="/sensors/haptics"
+        element={protectedPage(<HapticsPage />)}
+      />
+      <Route
+        path="/sensors/filesystem"
+        element={protectedPage(<FilesystemPage />)}
+      />
+      <Route
+        path="/sensors/local-notifications"
+        element={protectedPage(<LocalNotificationsPage />)}
+      />
+      <Route
+        path="/sensors/push-notifications"
+        element={protectedPage(<PushNotificationsPage />)}
+      />
 
-        <Route
-          path="/tasks/*"
-          element={
-            <ConnectionGuard>
-              <TasksTabs />
-            </ConnectionGuard>
-          }
-        />
-
-        <Route path="/fruits/*" element={<FruitsTabs />} />
-
-        <Route
-          path="*"
-          element={<Navigate to={user ? "/" : "/login"} replace />}
-        />
-      </IonRouterOutlet>
-
-      <Alert />
-      {showAppTabs && <AppTabs />}
-    </IonTabs>
+      <Route
+        path="*"
+        element={
+          pending ? (
+            <RedirectLoader />
+          ) : (
+            <Navigate to={user ? "/" : "/login"} replace />
+          )
+        }
+      />
+    </IonRouterOutlet>
   );
 };
 

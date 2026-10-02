@@ -8,7 +8,7 @@ const AppHeader = () => {
   const { handleLogout } = useAppHeader();
 
   return (
-    <PageHeader title="Challenge 06">
+    <PageHeader title="Challenge 07">
       <div className="flex items-center gap-2 pr-6">
         <span className="text-sm font-normal">@{user?.username}</span>
         <IonButton
