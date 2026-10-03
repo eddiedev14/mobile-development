@@ -4,10 +4,8 @@ import { useEffect, useState } from "react";
 //* Firebase
 import { auth } from "../../firebase/config";
 import {
-  browserSessionPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
-  setPersistence,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
@@ -52,21 +50,8 @@ export default function useAuthState() {
 
   //* Effects
   useEffect(() => {
-    setPersistence(auth, browserSessionPersistence).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    let isFirstNotification = true;
-
+    //? La sesión persiste entre recargas (persistencia local por defecto de getAuth)
     const unsubscribeAuth = onAuthStateChanged(auth, (fbUser) => {
-      const forceLogout = fbUser && isFirstNotification;
-      isFirstNotification = false;
-
-      if (forceLogout) {
-        signOut(auth).catch(() => {});
-        return; //? el propio signOut dispara una nueva notificación, ya con null
-      }
-
       if (!fbUser) {
         setUser(null);
         setUserLoading(false);
