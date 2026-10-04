@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import {
   PushNotifications,
   PushNotificationSchema,
@@ -34,6 +35,7 @@ export const usePushNotifications = () => {
       "pushNotificationReceived",
       (notification) => {
         setNotification(notification);
+        toast.info(`${notification.title} - ${notification.body}`);
       },
     );
 
@@ -47,7 +49,7 @@ export const usePushNotifications = () => {
     return () => {
       PushNotifications.removeAllListeners();
     };
-  });
+  }, []);
 
   return {
     token,

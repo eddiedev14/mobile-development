@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "759964426933",
+    "firebase_url": "https://mobile-development-ea468-default-rtdb.firebaseio.com",
+    "project_id": "mobile-development-ea468",
+    "storage_bucket": "mobile-development-ea468.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759964426933:android:7fb671d5942f4b2ba354fc",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSM-eE7q7vntqcmzSxmvdrA6OsYhT01HQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

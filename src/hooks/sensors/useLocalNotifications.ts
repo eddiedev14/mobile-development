@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { PermissionState, PluginListenerHandle } from "@capacitor/core";
 import { LocalNotifications } from "@capacitor/local-notifications";
 
+// Android exige IDs de 32 bits; Date.now() los desborda.
+const generateId = () => Date.now() % 2147483647;
+
 interface Notification {
   id?: number;
   title: string;
@@ -41,7 +44,7 @@ export const useLocalNotifications = () => {
   };
 
   const sendNotification = async ({
-    id = Date.now(),
+    id = generateId(),
     title = "Notificación",
     body = "Mensaje",
   }: Notification) => {
@@ -65,7 +68,7 @@ export const useLocalNotifications = () => {
   };
 
   const scheduleNotification = async ({
-    id = Date.now(),
+    id = generateId(),
     title = "Recordatorio",
     body = "Tienes algo pendiente",
     seconds = 5,

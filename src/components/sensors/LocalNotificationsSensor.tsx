@@ -4,6 +4,7 @@ import { useLocalNotifications } from "../../hooks/sensors/useLocalNotifications
 const LocalNotificationsSensor = () => {
   const {
     permission,
+    error,
     requestPermission,
     sendNotification,
     scheduleNotification,
@@ -48,6 +49,7 @@ const LocalNotificationsSensor = () => {
           </>
         )}
       </div>
+      {error && <p className="text-red-500">Error: {error.message}</p>}
     </section>
   );
 };
