@@ -75,7 +75,7 @@ export const useFilesystem = () => {
       if (error instanceof Error) {
         setError(error);
       } else {
-        setError(new Error("Ocurrió un error al escribir el archivo."));
+        setError(new Error("Ocurrió un error al leer el archivo."));
       }
 
       return null;
@@ -102,7 +102,7 @@ export const useFilesystem = () => {
       if (error instanceof Error) {
         setError(error);
       } else {
-        setError(new Error("Ocurrió un error al escribir el archivo."));
+        setError(new Error("Ocurrió un error al eliminar el archivo."));
       }
 
       return false;
@@ -129,7 +129,7 @@ export const useFilesystem = () => {
       if (error instanceof Error) {
         setError(error);
       } else {
-        setError(new Error("Ocurrió un error al escribir el archivo."));
+        setError(new Error("Ocurrió un error al listar los archivo."));
       }
 
       return [];
@@ -157,7 +157,7 @@ export const useFilesystem = () => {
       if (error instanceof Error) {
         setError(error);
       } else {
-        setError(new Error("Ocurrió un error al escribir el archivo."));
+        setError(new Error("Ocurrió un error al crear el directorio."));
       }
 
       return false;
@@ -186,7 +186,7 @@ export const useFilesystem = () => {
       if (error instanceof Error) {
         setError(error);
       } else {
-        setError(new Error("Ocurrió un error al escribir el archivo."));
+        setError(new Error("Ocurrió un error al eliminar el directorio."));
       }
 
       return false;
