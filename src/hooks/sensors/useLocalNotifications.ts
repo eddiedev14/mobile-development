@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PermissionState, PluginListenerHandle } from "@capacitor/core";
 import { LocalNotifications } from "@capacitor/local-notifications";
+import { toast } from "react-toastify";
 
 // Android exige IDs de 32 bits; Date.now() los desborda.
 const generateId = () => Date.now() % 2147483647;
@@ -73,6 +74,7 @@ export const useLocalNotifications = () => {
     body = "Tienes algo pendiente",
     seconds = 5,
   }: Notification) => {
+    const at = new Date(Date.now() + seconds * 1000);
     try {
       await LocalNotifications.schedule({
         notifications: [
@@ -81,11 +83,15 @@ export const useLocalNotifications = () => {
             title,
             body,
             schedule: {
-              at: new Date(Date.now() + seconds * 1000),
+              at,
+              allowWhileIdle: true,
             },
           },
         ],
       });
+      toast.success(
+        `Programada para las ${at.toLocaleTimeString()}. Si no llega, revisa ajustes de batería/alarmas.`,
+      );
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error);
