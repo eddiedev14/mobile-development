@@ -1,4 +1,4 @@
-import { FirestoreDoc } from "../firebase/types/firestore.types";
+import { SupabaseRow } from "../supabase/types/supabase.types";
 
 export interface Task {
   name: string;
@@ -6,5 +6,5 @@ export interface Task {
   completed: boolean;
 }
 
-export type TaskDoc = FirestoreDoc<Task>;
+export type TaskDoc = SupabaseRow<Task>;
 export type TaskFormData = Omit<Task, "completed">;

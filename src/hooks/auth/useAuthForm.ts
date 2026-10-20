@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import type { UserLogin, UserRegister } from "../../interfaces/user.interface";
+import type { UserPhoto } from "../../interfaces/photo.interface";
 import { passwordRegex } from "../../constants/regex.constant";
 import { useAuth } from "./useAuth";
 
@@ -8,7 +9,10 @@ export const useAuthForm = (isSignup: boolean) => {
   const { registerWithEmailAndPassword, loginWithEmailAndPassword } = useAuth();
   const [submitting, setSubmitting] = useState(false);
 
-  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (
+    e: React.FormEvent<HTMLFormElement>,
+    photo: UserPhoto | null,
+  ) => {
     e.preventDefault();
     const form: HTMLFormElement = e.currentTarget;
 
@@ -27,6 +31,12 @@ export const useAuthForm = (isSignup: boolean) => {
       return;
     }
 
+    // Validar foto de perfil
+    if (!photo) {
+      toast.error("La foto de perfil es obligatoria.");
+      return;
+    }
+
     // Validar password
     if (!passwordRegex.test(password)) {
       toast.error("La contraseña no cumple con las condiciones de seguridad.");
@@ -34,7 +44,10 @@ export const useAuthForm = (isSignup: boolean) => {
     }
 
     setSubmitting(true);
-    const error = await registerWithEmailAndPassword({ email, password, username });
+    const error = await registerWithEmailAndPassword(
+      { email, password, username },
+      photo,
+    );
     setSubmitting(false);
 
     if (error) {
@@ -72,5 +85,11 @@ export const useAuthForm = (isSignup: boolean) => {
     toast.success("Sesión iniciada correctamente");
   };
 
-  return { handleSubmit: isSignup ? handleRegister : handleLogin, submitting };
+  //? La foto sólo se usa en el registro; el login la ignora
+  const handleSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    photo: UserPhoto | null = null,
+  ) => (isSignup ? handleRegister(e, photo) : handleLogin(e));
+
+  return { handleSubmit, submitting };
 };

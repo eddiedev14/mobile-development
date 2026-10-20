@@ -1,11 +1,11 @@
-import { FirestoreDoc } from "../firebase/types/firestore.types";
+import { SupabaseRow } from "../supabase/types/supabase.types";
 
 export interface User {
   email: string;
   username: string;
 }
 
-export type UserDoc = FirestoreDoc<User>;
+export type UserDoc = SupabaseRow<User>;
 
 // Forms
 export type UserRegister = {

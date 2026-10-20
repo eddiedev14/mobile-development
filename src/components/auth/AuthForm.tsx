@@ -1,13 +1,16 @@
 import { Link } from "react-router-dom";
 import {
   IonButton,
+  IonIcon,
   IonInput,
   IonItem,
   IonList,
   IonSpinner,
 } from "@ionic/react";
+import { cameraOutline } from "ionicons/icons";
 import ProfilePicture from "/profile-picture.png";
 import { useAuthForm } from "../../hooks/auth/useAuthForm";
+import { useCamera } from "../../hooks/sensors/useCamera";
 
 interface Props {
   isSignup: boolean;
@@ -15,11 +18,12 @@ interface Props {
 
 export const AuthForm = ({ isSignup }: Props) => {
   const { handleSubmit, submitting } = useAuthForm(isSignup);
+  const { photo, takePhoto } = useCamera();
 
   return (
     <main className="w-full max-w-md m-4 flex flex-col items-center gap-3 p-6 border border-(--ion-color-light) rounded-xl">
       <img
-        src={ProfilePicture}
+        src={isSignup && photo ? photo.webPath : ProfilePicture}
         alt="Profile Picture"
         className="size-32 object-cover rounded-full"
       />
@@ -32,7 +36,10 @@ export const AuthForm = ({ isSignup }: Props) => {
           : "Inicia Sesión para seguir gestionando tus tareas"}
       </p>
 
-      <form onSubmit={handleSubmit} className="w-full mt-2 flex flex-col gap-4">
+      <form
+        onSubmit={(e) => handleSubmit(e, photo)}
+        className="w-full mt-2 flex flex-col gap-4"
+      >
         <IonList>
           {/* Email */}
           <IonItem>
@@ -68,6 +75,14 @@ export const AuthForm = ({ isSignup }: Props) => {
             ></IonInput>
           </IonItem>
         </IonList>
+
+        {/* Foto de perfil (obligatoria en el registro) */}
+        {isSignup && (
+          <IonButton type="button" fill="outline" onClick={takePhoto}>
+            <IonIcon slot="start" icon={cameraOutline} />
+            {photo ? "Volver a tomar foto" : "Tomar foto de perfil"}
+          </IonButton>
+        )}
 
         <IonButton type="submit" disabled={submitting}>
           {submitting ? (

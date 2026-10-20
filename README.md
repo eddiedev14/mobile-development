@@ -1,13 +1,9 @@
-# Challenge 06: Firebase Storage & Dexie
+# Challenge 08: Supabase Auth, Storage & Realtime
 
-1. Implement a new app in Ionic with real login and routes to handle, based on the previous challenges:
+1. Create the project, the **tasks** table with RLS, and the **avatars** bucket in Supabase.
 
-   a. Contacts in Firebase
+2. Registration, login, CRUD, and live list.
 
-   b. Tasks in Realtime
-
-   c. Fruits in Dexie
-
-2. Valide if you have network connection, then enable or disable **Contacts and Tasks** actions depending on the network connection.
+3. Use Ionic components and camera photo capture.
 
 > Eddie Santiago Delgado Campo - 2235060
