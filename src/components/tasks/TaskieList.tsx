@@ -36,7 +36,7 @@ const TaskieList = () => {
               className="text-sm font-medium w-96 truncate cursor-pointer hover:underline"
               onClick={() => navigate(`/tasks/${task.id}`)}
             >
-              {task.name}
+              {task.title}
             </span>
 
             <div className="flex items-center gap-4">

@@ -10,7 +10,7 @@ export const useTaskieList = () => {
   const openDeleteAlert = (task: TaskDoc) => {
     openAlert({
       header: "Eliminar tarea",
-      message: `¿Seguro que deseas eliminar la tarea "${task.name}"?`,
+      message: `¿Seguro que deseas eliminar la tarea "${task.title}"?`,
       onConfirm: async () => {
         const error = await removeTask(task.id);
         if (error) {

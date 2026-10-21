@@ -14,7 +14,7 @@ import { useTaskie } from "../../hooks/tasks/useTaskie";
 const TaskDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const { tasks, toggleComplete } = useTaskie();
-  const task = tasks.find((task) => task.id === id);
+  const task = tasks.find((task) => task.id == id);
 
   if (!task) {
     return (
@@ -36,7 +36,7 @@ const TaskDetailPage = () => {
       <PageHeader title="Detalle de Tarea" backHref="/tasks/list" />
       <IonContent fullscreen>
         <main className="max-w-2xl mx-auto p-4">
-          <h2 className="text-2xl font-semibold">{task.name}</h2>
+          <h2 className="text-2xl font-semibold">{task.title}</h2>
 
           <IonList className="mt-4">
             <IonItem>

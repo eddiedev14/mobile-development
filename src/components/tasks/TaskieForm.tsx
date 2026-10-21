@@ -9,8 +9,8 @@ interface Props {
 const TaskieForm = ({ isEdit = false }: Props) => {
   const {
     handleSubmit,
-    name,
-    setName,
+    title,
+    setTitle,
     description,
     setDescription,
     isLoading,
@@ -38,12 +38,12 @@ const TaskieForm = ({ isEdit = false }: Props) => {
         {/* Nombre */}
         <IonItem>
           <IonInput
-            name="name"
+            name="title"
             label="Nombre"
             labelPlacement="floating"
             placeholder="e.g. Estudiar"
-            value={name}
-            onIonInput={(e) => setName(e.detail.value ?? "")}
+            value={title}
+            onIonInput={(e) => setTitle(e.detail.value ?? "")}
           ></IonInput>
         </IonItem>
 

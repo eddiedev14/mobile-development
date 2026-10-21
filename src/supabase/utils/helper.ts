@@ -84,6 +84,10 @@ const getAuthErrorMessage = (error: unknown): string => {
 // Función para obtener el mensaje de error de Supabase a la hora de consultar
 // o modificar una tabla (errores de PostgREST / Postgres)
 const getDbErrorMessage = (error: unknown): string => {
+  //? El toast muestra un mensaje traducido; el error original (columna que no
+  //? existe, campo obligatorio, RLS, etc.) queda siempre en consola para depurar
+  console.error(error);
+
   //? PostgrestError extiende de Error y agrega `code` (código de Postgres o PGRST...)
   const code =
     error instanceof Error && "code" in error
@@ -116,11 +120,9 @@ const getDbErrorMessage = (error: unknown): string => {
       return "Error de conexión. Revisa tu conexión a internet";
     }
 
-    //? Los mensajes de Supabase vienen en inglés: se muestra uno genérico en
-    //? español y el original se deja en consola para depurar
-    console.error(error);
   }
 
+  //? Los mensajes de Supabase vienen en inglés: se muestra uno genérico en español
   return "Ocurrió un error inesperado";
 };
 

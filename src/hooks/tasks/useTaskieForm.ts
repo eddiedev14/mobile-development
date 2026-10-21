@@ -9,17 +9,17 @@ export const useTaskieForm = (isEdit = false) => {
   const { tasks, isPending, addTask, updateTask } = useTaskie();
   const navigate = useNavigate();
 
-  const task = isEdit ? tasks.find((task) => task.id === id) : undefined;
+  const task = isEdit ? tasks.find((task) => task.id == id) : undefined;
   const isLoading = isEdit && !task && isPending;
 
   //* States
-  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
   //? Precarga los datos de la tarea cuando se está editando
   useEffect(() => {
     if (!task) return;
-    setName(task.name);
+    setTitle(task.title);
     setDescription(task.description);
   }, [task]);
 
@@ -28,14 +28,14 @@ export const useTaskieForm = (isEdit = false) => {
     e.preventDefault();
 
     // Validar datos vacíos
-    if (name.trim() === "" || description.trim() === "") {
+    if (title.trim() === "" || description.trim() === "") {
       toast.error("Todos los campos son obligatorios.");
       return;
     }
 
     if (isEdit && id) {
       const error = await updateTask(id, {
-        name: name.trim(),
+        title: title.trim(),
         description: description.trim(),
       });
       if (error) {
@@ -49,7 +49,7 @@ export const useTaskieForm = (isEdit = false) => {
     }
 
     const taskToAdd: Task = {
-      name: name.trim(),
+      title: title.trim(),
       description: description.trim(),
       completed: false,
     };
@@ -61,15 +61,15 @@ export const useTaskieForm = (isEdit = false) => {
     }
 
     toast.success("Tarea agregada correctamente.");
-    setName("");
+    setTitle("");
     setDescription("");
     navigate("/tasks/list");
   };
 
   return {
     handleSubmit,
-    name,
-    setName,
+    title,
+    setTitle,
     description,
     setDescription,
     isLoading,

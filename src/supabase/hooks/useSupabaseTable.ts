@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 import { supabase } from "../config";
 import type { SupabaseRow } from "../types/supabase.types";
 import { getDbErrorMessage } from "../utils/helper";
@@ -128,41 +129,63 @@ export const useSupabaseTable = <T extends object>(
   useEffect(() => {
     if (!enabled || !realtime) return;
 
-    //? El nombre del canal es único para que dos componentes que usen la misma
-    //? tabla no compartan (ni cierren) el canal del otro
-    const channel = supabase
-      .channel(`${table}:${crypto.randomUUID()}`)
-      .on<SupabaseRow<T>>(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table,
-          //? El filtro de realtime usa la sintaxis de PostgREST: "columna=eq.valor"
-          ...(filterColumn !== undefined && {
-            filter: `${filterColumn}=eq.${filterValue}`,
-          }),
-        },
-        (payload) => {
-          switch (payload.eventType) {
-            case "INSERT":
-            case "UPDATE":
-              //? `payload.new` es la fila completa tras el cambio
-              upsertRow(payload.new);
-              break;
+    //? Evita crear el canal si el efecto se limpió mientras se esperaba el token
+    let cancelled = false;
+    let channel: RealtimeChannel | null = null;
 
-            case "DELETE":
-              //? En DELETE sólo viene la llave primaria en `payload.old`
-              if (payload.old.id) removeRow(payload.old.id);
-              break;
+    const subscribe = async () => {
+      //? Realtime evalúa la RLS con el token que tiene el canal AL UNIRSE y no lo
+      //? vuelve a evaluar después. Si se une antes de tener la sesión queda como
+      //? anónimo: no da error, pero tampoco llega ningún evento. Por eso se
+      //? asegura el token del usuario antes de suscribirse
+      await supabase.realtime.setAuth();
+      if (cancelled) return;
+
+      //? El nombre del canal es único para que dos componentes que usen la misma
+      //? tabla no compartan (ni cierren) el canal del otro
+      channel = supabase
+        .channel(`${table}:${crypto.randomUUID()}`)
+        .on<SupabaseRow<T>>(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table,
+            //? El filtro de realtime usa la sintaxis de PostgREST: "columna=eq.valor"
+            ...(filterColumn !== undefined && {
+              filter: `${filterColumn}=eq.${filterValue}`,
+            }),
+          },
+          (payload) => {
+            switch (payload.eventType) {
+              case "INSERT":
+              case "UPDATE":
+                //? `payload.new` es la fila completa tras el cambio
+                upsertRow(payload.new);
+                break;
+
+              case "DELETE":
+                //? En DELETE sólo viene la llave primaria en `payload.old`
+                if (payload.old.id) removeRow(payload.old.id);
+                break;
+            }
+          },
+        )
+        .subscribe((status, err) => {
+          //? SUBSCRIBED = conectado. Si falla, el motivo sale en consola
+          //? (ej. Realtime no está activado para la tabla)
+          if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+            console.error(`Realtime de "${table}": ${status}`, err);
           }
-        },
-      )
-      .subscribe();
+        });
+    };
 
-    //? Al desmontar (o cambiar de tabla/filtro) se cierra el canal
+    subscribe();
+
+    //? Al desmontar (o cambiar de tabla/filtro/sesión) se cierra el canal
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      if (channel) supabase.removeChannel(channel);
     };
   }, [
     table,
