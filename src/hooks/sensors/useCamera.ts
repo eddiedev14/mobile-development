@@ -15,6 +15,9 @@ export const useCamera = () => {
         allowEditing: false,
         resultType: CameraResultType.Uri,
         source: CameraSource.Camera,
+        //? Sólo web: usa el selector de archivos en vez de la webcam, para poder
+        //? probar en una PC sin cámara. En Android/iOS se ignora y abre la cámara
+        webUseInput: true,
       });
 
       if (!image.webPath) {

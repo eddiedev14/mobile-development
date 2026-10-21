@@ -3,6 +3,7 @@ import { SupabaseRow } from "../supabase/types/supabase.types";
 export interface User {
   email: string;
   username: string;
+  avatarUrl: string;
 }
 
 export type UserDoc = SupabaseRow<User>;

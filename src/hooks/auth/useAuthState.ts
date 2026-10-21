@@ -1,55 +1,111 @@
 //* React
-import { useState } from "react";
-
-// * Types & utils
+import { useEffect, useState } from "react";
 import type {
   UserDoc,
   UserLogin,
   UserRegister,
 } from "../../interfaces/user.interface";
 import type { UserPhoto } from "../../interfaces/photo.interface";
-
-//? TODO: Reemplazar el estado local por Supabase Auth. Por ahora el "usuario"
-//? vive sólo en memoria para poder navegar la app sin backend.
+import { supabase } from "../../supabase/config";
+import {
+  AVATARS_BUCKET,
+  getAuthErrorMessage,
+  getAvatarPath,
+  getAvatarUrl,
+  toUserDoc,
+} from "../../supabase/utils/helper";
 
 export default function useAuthState() {
   //* States
   const [user, setUser] = useState<UserDoc | null>(null);
-  //? TODO: Resolver la sesión existente (supabase.auth.getSession) y
-  //? suscribirse a onAuthStateChange para actualizar `user` y `userLoading`
-  const [userLoading] = useState(false);
+  const [userLoading, setUserLoading] = useState(true);
+
+  //* Effects
+  // Escucha cambios en el estado de autenticación
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ? toUserDoc(session.user) : null);
+      setUserLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   //* Functions
   const registerWithEmailAndPassword = async (
     newUser: UserRegister,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     photo: UserPhoto,
   ): Promise<string | null> => {
-    //? TODO: Registrar con supabase.auth.signUp y subir `photo.blob` al bucket "avatars"
-    setUser({
-      id: crypto.randomUUID(),
-      email: newUser.email,
-      username: newUser.username,
+    const { email, username, password } = newUser;
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: window.location.origin,
+        data: {
+          // Metadatos del usuario
+          username,
+        },
+      },
     });
+
+    if (error) return getAuthErrorMessage(error);
+
+    const authUser = data.user;
+    if (!authUser) {
+      return "No hay un usuario autenticado";
+    }
+
+    //? Sin `session` no hay usuario autenticado y las policies del bucket
+    //? "avatars" rechazarían la subida.
+    if (!data.session) {
+      return "Confirma tu correo para terminar el registro";
+    }
+
+    // Subir la foto de perfil al bucket "avatars"
+    const { error: uploadError } = await supabase.storage
+      .from(AVATARS_BUCKET)
+      .upload(getAvatarPath(authUser.id), photo.blob, {
+        contentType: photo.blob.type || `image/${photo.format}`,
+        upsert: true, // si se vuelve a registrar/subir, reemplaza la anterior
+      });
+
+    //? La cuenta ya existe y la sesión está abierta; sólo falló la foto
+    if (uploadError) {
+      //? El motivo real (RLS, mime type, tamaño, bucket inexistente) sólo se ve aquí
+      console.error("Error subiendo el avatar:", uploadError);
+      return "Cuenta creada, pero no se pudo subir la foto de perfil";
+    }
+
+    //? `onAuthStateChange` ya guardó al usuario antes de que terminara la subida,
+    //? así que su avatar apunta a una foto que aún no existía. Se actualiza la URL
+    //? con una versión nueva para que el header la vuelva a pedir
+    setUser((prev) =>
+      prev ? { ...prev, avatarUrl: getAvatarUrl(prev.id, Date.now()) } : prev,
+    );
+
     return null;
   };
 
   const loginWithEmailAndPassword = async (
     credentials: UserLogin,
   ): Promise<string | null> => {
-    //? TODO: Iniciar sesión con supabase.auth.signInWithPassword
-    setUser({
-      id: crypto.randomUUID(),
-      email: credentials.email,
-      username: credentials.email.split("@")[0],
+    const { email, password } = credentials;
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
-    return null;
+
+    return error ? getAuthErrorMessage(error) : null;
   };
 
   const logout = async (): Promise<string | null> => {
-    //? TODO: Cerrar sesión con supabase.auth.signOut
-    setUser(null);
-    return null;
+    const { error } = await supabase.auth.signOut();
+    return error ? getAuthErrorMessage(error) : null;
   };
 
   return {

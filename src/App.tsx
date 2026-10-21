@@ -1,9 +1,6 @@
-import { useEffect } from "react";
-import { Navigate, Route, useLocation, useNavigate } from "react-router-dom";
+import { Route, useLocation } from "react-router-dom";
 import {
   IonApp,
-  IonContent,
-  IonPage,
   IonRouterOutlet,
   IonTabs,
   setupIonicReact,
@@ -31,67 +28,65 @@ import "./theme/variables.css";
 import { AuthPage, HomePage, TasksTabs } from "./pages";
 import AppTabs from "./components/shared/AppTabs";
 import Alert from "./components/shared/Alert";
-import { Loader } from "./components/shared/Loader";
+import AuthGuard, { Redirect } from "./router/AuthGuard";
 import { useAuth } from "./hooks/auth/useAuth";
 
 setupIonicReact();
 
-//? Rutas accesibles sin sesión iniciada
-const AUTH_ROUTES = ["/login", "/signup"];
-
-//? Página mostrada mientras se resuelve la redirección de autenticación.
-//? Debe ser un <IonPage> real: si la vista entrante no registra una página,
-//? el router no puede completar la transición.
-const RedirectLoader = () => (
-  <IonPage>
-    <IonContent fullscreen>
-      <div className="min-h-dvh flex items-center justify-center">
-        <Loader />
-      </div>
-    </IonContent>
-  </IonPage>
-);
-
 const AppRoutes = () => {
-  const { user, userLoading } = useAuth();
+  const { user } = useAuth();
   const { pathname } = useLocation();
-  const navigate = useNavigate();
-
-  const isAuthRoute = AUTH_ROUTES.includes(pathname);
-  const isRedirecting = !userLoading && (user ? isAuthRoute : !isAuthRoute);
-
-  useEffect(() => {
-    if (isRedirecting) {
-      navigate(user ? "/" : "/login", { replace: true });
-    }
-  }, [isRedirecting, navigate, user]);
-
-  if (userLoading || isRedirecting) {
-    return <RedirectLoader />;
-  }
 
   //? Las tabs principales sólo se muestran en la página de inicio,
   //? ya que cada app se abre como una página nueva (con botón de "atrás")
   const showAppTabs = user && pathname === "/";
 
+  //? El <IonTabs> y el <IonRouterOutlet> nunca se desmontan: las redirecciones
+  //? por sesión las hace <AuthGuard/> dentro de cada ruta
   return (
     <IonTabs>
       <IonRouterOutlet>
         {/* Auth Routes */}
-        <Route path="/login" element={<AuthPage />} />
-        <Route path="/signup" element={<AuthPage isSignup />} />
+        <Route
+          path="/login"
+          element={
+            <AuthGuard access="guest">
+              <AuthPage />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <AuthGuard access="guest">
+              <AuthPage isSignup />
+            </AuthGuard>
+          }
+        />
 
         {/* Protected Routes */}
-        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/"
+          element={
+            <AuthGuard access="private">
+              <HomePage />
+            </AuthGuard>
+          }
+        />
 
         {/* La app se monta con un splat para que sus sub-rutas
             (/tasks/list, /tasks/new, etc.) queden dentro de su alcance */}
-        <Route path="/tasks/*" element={<TasksTabs />} />
-
         <Route
-          path="*"
-          element={<Navigate to={user ? "/" : "/login"} replace />}
+          path="/tasks/*"
+          element={
+            <AuthGuard access="private">
+              <TasksTabs />
+            </AuthGuard>
+          }
         />
+
+        {/* Cualquier otra ruta va a "/", y ahí la guarda decide si hay sesión */}
+        <Route path="*" element={<Redirect to="/" />} />
       </IonRouterOutlet>
 
       <Alert />
