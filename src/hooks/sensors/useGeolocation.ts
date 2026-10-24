@@ -3,7 +3,6 @@ import { Geolocation, Position } from '@capacitor/geolocation';
 
 export const useGeolocation = () => {
   const [position, setPosition] = useState<Position | null>(null);
-  const [error, setError] = useState<Error | null>(null);
 
   // ID utilizado para identificar y detener la escucha del tracking
   const watchId = useRef<string | null>(null);
@@ -28,15 +27,9 @@ export const useGeolocation = () => {
         enableHighAccuracy: true,
       });
       setPosition(currentPosition);
-      setError(null);
       return currentPosition;
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error);
-      } else {
-        setError(new Error('Ocurrió un error desconocido'));
-      }
-
+      console.error('Error al obtener la ubicación:', error);
       return null;
     }
   };
@@ -57,18 +50,12 @@ export const useGeolocation = () => {
         },
         (pos: Position | null, err: unknown | null) => {
           if (err) {
-            if (err instanceof Error) {
-              setError(err);
-            } else {
-              setError(new Error('Ocurrió un error desconocido'));
-            }
-
+            console.error('Error en el seguimiento de ubicación:', err);
             return;
           }
 
           if (pos) {
             setPosition(pos);
-            setError(null);
           }
         },
       );
@@ -82,12 +69,7 @@ export const useGeolocation = () => {
       watchId.current = id;
       return true;
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error);
-      } else {
-        setError(new Error('Ocurrió un error desconocido'));
-      }
-
+      console.error('No se pudo iniciar el seguimiento de ubicación:', error);
       return false;
     }
   };
@@ -107,7 +89,6 @@ export const useGeolocation = () => {
 
   return {
     position,
-    error,
     getCurrentLocation,
     startTracking,
     stopTracking,

@@ -78,9 +78,6 @@ const AppRoutes = () => {
           <Route path="/results" element={<ResultsPage />} />
           <Route path="/ranking" element={<RankingPage />} />
 
-          {/* TODO: Si el ranking requiere internet, envolverlo con <ConnectionGuard>
-              (components/shared/ConnectionGuard). */}
-
           <Route
             path="*"
             element={<Navigate to={user ? '/' : '/login'} replace />}
