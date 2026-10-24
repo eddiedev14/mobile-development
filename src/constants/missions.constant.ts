@@ -1,5 +1,8 @@
 import { cameraOutline, locationOutline, timerOutline } from 'ionicons/icons';
-import type { MissionDefinition } from '../interfaces/mission.interface';
+import type {
+  MissionDefinition,
+  MissionProgress,
+} from '../interfaces/mission.interface';
 
 //? Distancia (en metros) que se debe mover el usuario para la misión 2
 const MOVE_DISTANCE_METERS = 50;
@@ -35,4 +38,10 @@ const MISSIONS: MissionDefinition[] = [
   },
 ];
 
-export { MISSIONS, MOVE_DISTANCE_METERS, STILL_SECONDS };
+//? Progreso de un usuario nuevo: ninguna misión completada
+const INITIAL_PROGRESS: MissionProgress[] = MISSIONS.map(({ id }) => ({
+  id,
+  completed: false,
+}));
+
+export { INITIAL_PROGRESS, MISSIONS, MOVE_DISTANCE_METERS, STILL_SECONDS };

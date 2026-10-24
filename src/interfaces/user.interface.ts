@@ -4,8 +4,8 @@ import type { MissionProgress } from './mission.interface';
 export interface User {
   email: string;
   username: string;
-  points?: number;
-  missions?: MissionProgress[];
+  points: number;
+  missions: MissionProgress[];
 }
 
 export type UserDoc = FirestoreDoc<User>;

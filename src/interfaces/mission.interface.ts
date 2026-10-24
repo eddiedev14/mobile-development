@@ -18,12 +18,6 @@ export interface MissionProgress {
   completed: boolean;
 }
 
-//? Documento de progreso
-export interface UserProgress {
-  points: number;
-  missions: MissionProgress[];
-}
-
 //? Misión lista para pintar en la UI
 export interface MissionView extends MissionDefinition {
   status: MissionStatus;

@@ -21,6 +21,7 @@ import {
   UserRegister,
 } from "../../interfaces/user.interface";
 import { getAuthErrorMessage } from "../../firebase/utils/helper";
+import { INITIAL_PROGRESS } from "../../constants/missions.constant";
 
 const loginWithEmailAndPassword = async (
   credentials: UserLogin,
@@ -92,6 +93,8 @@ export default function useAuthState() {
             id: fbUser.uid,
             email: fbUser.email ?? "",
             username: "",
+            points: 0,
+            missions: INITIAL_PROGRESS,
           },
         );
         setUserLoading(false);
@@ -118,7 +121,12 @@ export default function useAuthState() {
         email,
         password,
       );
-      await setById(userCredential.user.uid, { email, username });
+      await setById(userCredential.user.uid, {
+        email,
+        username,
+        points: 0,
+        missions: INITIAL_PROGRESS,
+      });
     } catch (err) {
       error = getAuthErrorMessage(err);
     }

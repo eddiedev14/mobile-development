@@ -1,11 +1,13 @@
-//? Lógica real de cada misión. Cada función, al cumplirse la condición, debe llamar a completeMission(id)
+import { useMissions } from './useMissions';
+
 export const useMissionActions = () => {
-  //TODO: const { completeMission } = useMissions(); (import { useMissions } from "./useMissions")
+  const { completeMission } = useMissions();
 
   //* Misión 1: Evidencia
   const takePhoto = async () => {
     //TODO: Camera.getPhoto(...) y guardar la imagen en Firebase Storage (en navegador abre el selector de archivos)
     //TODO: Al guardar la imagen -> await completeMission(1)
+    completeMission(1);
   };
 
   //* Misión 2: Movimiento real
