@@ -22,6 +22,7 @@ import {
 } from "../../interfaces/user.interface";
 import { getAuthErrorMessage } from "../../firebase/utils/helper";
 import { INITIAL_PROGRESS } from "../../constants/missions.constant";
+import { saveLocalProgress } from "../../utils/progressStorage";
 
 const loginWithEmailAndPassword = async (
   credentials: UserLogin,
@@ -88,15 +89,22 @@ export default function useAuthState() {
         //? datos de la sesión, en lugar de dejar `user` en null para siempre
         //? (eso dejaba al usuario atrapado en el loader y además lo expulsaba
         //? a /login en cada carga de la app)
-        setUser(
-          userDoc ?? {
-            id: fbUser.uid,
-            email: fbUser.email ?? "",
-            username: "",
-            points: 0,
-            missions: INITIAL_PROGRESS,
-          },
-        );
+        const nextUser = userDoc ?? {
+          id: fbUser.uid,
+          email: fbUser.email ?? "",
+          username: "",
+          points: 0,
+          missions: INITIAL_PROGRESS,
+        };
+
+        //? Al iniciar sesión (y en cada cambio del documento) se inicializa/actualiza
+        //? el progreso guardado localmente con lo que hay en Firestore
+        saveLocalProgress(fbUser.uid, {
+          points: nextUser.points ?? 0,
+          missions: nextUser.missions ?? INITIAL_PROGRESS,
+        });
+
+        setUser(nextUser);
         setUserLoading(false);
       });
     });

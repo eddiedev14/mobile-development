@@ -9,6 +9,10 @@ import { useCollection } from '../../firebase/hooks/useCollection';
 import { useAuth } from '../auth/useAuth';
 import { useLocalNotifications } from '../sensors/useLocalNotifications';
 import { User } from '../../interfaces/user.interface';
+import {
+  getLocalProgress,
+  saveLocalProgress,
+} from '../../utils/progressStorage';
 
 export const useMissionsState = () => {
   //* States & Context
@@ -23,8 +27,18 @@ export const useMissionsState = () => {
 
   //* Effects
   useEffect(() => {
-    setProgress(user?.missions ?? INITIAL_PROGRESS);
-  }, [user?.missions]);
+    if (!user) {
+      setProgress(INITIAL_PROGRESS);
+      return;
+    }
+
+    // Firestore manda; si el documento no trae misiones se usa lo guardado localmente
+    setProgress(
+      user.missions ??
+        getLocalProgress(user.id)?.missions ??
+        INITIAL_PROGRESS,
+    );
+  }, [user]);
 
   //* Derived values
   const missions = useMemo<MissionView[]>(
@@ -79,8 +93,15 @@ export const useMissionsState = () => {
       const isOneMissing =
         newProgressState.filter((p) => !p.completed).length === 1;
 
-      // Actualizar documento de user en Firestore
       if (!user) return;
+
+      // Guardar localmente primero: así no se pierde aunque Firestore falle
+      saveLocalProgress(user.id, {
+        points: newTotalPoints,
+        missions: newProgressState,
+      });
+
+      // Actualizar documento de user en Firestore
       const updated = await update(user.id, {
         points: newTotalPoints,
         missions: newProgressState,
