@@ -1,55 +1,51 @@
-import { useEffect } from "react";
-import { Navigate, Route, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
+import { Navigate, Route, useLocation, useNavigate } from 'react-router-dom';
 import {
   IonApp,
-  IonContent,
-  IonPage,
   IonRouterOutlet,
   IonTabs,
   setupIonicReact,
-} from "@ionic/react";
-import { IonReactRouter } from "@ionic/react-router";
+} from '@ionic/react';
+import { IonReactRouter } from '@ionic/react-router';
 
 /* Core CSS required for Ionic components to work properly */
-import "@ionic/react/css/core.css";
+import '@ionic/react/css/core.css';
 
 /* Basic CSS for apps built with Ionic */
-import "@ionic/react/css/normalize.css";
-import "@ionic/react/css/structure.css";
-import "@ionic/react/css/typography.css";
+import '@ionic/react/css/normalize.css';
+import '@ionic/react/css/structure.css';
+import '@ionic/react/css/typography.css';
 
 /* Optional CSS utils that can be commented out */
-import "@ionic/react/css/padding.css";
-import "@ionic/react/css/float-elements.css";
-import "@ionic/react/css/text-alignment.css";
-import "@ionic/react/css/text-transformation.css";
-import "@ionic/react/css/flex-utils.css";
-import "@ionic/react/css/display.css";
-import "@ionic/react/css/palettes/dark.system.css";
-import "./theme/variables.css";
+import '@ionic/react/css/padding.css';
+import '@ionic/react/css/float-elements.css';
+import '@ionic/react/css/text-alignment.css';
+import '@ionic/react/css/text-transformation.css';
+import '@ionic/react/css/flex-utils.css';
+import '@ionic/react/css/display.css';
+import '@ionic/react/css/palettes/dark.system.css';
+import './theme/variables.css';
 
-import { AuthPage, HomePage } from "./pages";
-import AppTabs from "./components/shared/AppTabs";
-import Alert from "./components/shared/Alert";
-import { Loader } from "./components/shared/Loader";
-import { useAuth } from "./hooks/auth/useAuth";
+import { AuthPage, HomePage } from './pages';
+import AppTabs from './components/shared/AppTabs';
+import Alert from './components/shared/Alert';
+import { Loader } from './components/shared/Loader';
+import { useAuth } from './hooks/auth/useAuth';
 
 setupIonicReact();
 
 //? Rutas accesibles sin sesión iniciada
-const AUTH_ROUTES = ["/login", "/signup"];
+const AUTH_ROUTES = ['/login', '/signup'];
 
-//? Página mostrada mientras se resuelve la redirección de autenticación.
-//? Debe ser un <IonPage> real: si la vista entrante no registra una página,
-//? el router no puede completar la transición.
-const RedirectLoader = () => (
-  <IonPage>
-    <IonContent fullscreen>
-      <div className="min-h-dvh flex items-center justify-center">
-        <Loader />
-      </div>
-    </IonContent>
-  </IonPage>
+//? Cubre la pantalla mientras se resuelve la sesión o la redirección.
+//? NO es una página de Ionic: se dibuja encima del <IonTabs> sin tocar el árbol
+//? del router. Reemplazar el <IonRouterOutlet> (o el <IonPage> de una vista)
+//? por un loader durante la navegación deja la transición apuntando a un
+//? elemento obsoleto y la página destino queda en blanco (ej. al cerrar sesión).
+const LoadingOverlay = () => (
+  <div className="fixed inset-0 z-10000 bg-(--ion-background-color)">
+    <Loader />
+  </div>
 );
 
 const AppRoutes = () => {
@@ -62,41 +58,40 @@ const AppRoutes = () => {
 
   useEffect(() => {
     if (isRedirecting) {
-      navigate(user ? "/" : "/login", { replace: true });
+      navigate(user ? '/' : '/login', { replace: true });
     }
   }, [isRedirecting, navigate, user]);
 
-  if (userLoading || isRedirecting) {
-    return <RedirectLoader />;
-  }
-
-  //? Las tabs se muestran en todas las rutas protegidas (las rutas de
-  //? autenticación nunca llegan aquí con sesión iniciada)
-  const showAppTabs = !!user;
+  //? Las tabs se muestran en todas las rutas protegidas
+  const showAppTabs = !!user && !userLoading;
 
   return (
-    <IonTabs>
-      <IonRouterOutlet>
-        {/* Auth Routes */}
-        <Route path="/login" element={<AuthPage />} />
-        <Route path="/signup" element={<AuthPage isSignup />} />
+    <>
+      <IonTabs>
+        <IonRouterOutlet>
+          {/* Auth Routes */}
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/signup" element={<AuthPage isSignup />} />
 
-        {/* Protected Routes */}
-        <Route path="/" element={<HomePage />} />
+          {/* Protected Routes */}
+          <Route path="/" element={<HomePage />} />
 
-        {/* TODO: agregar aquí las rutas del parcial.
-            Si una pantalla requiere internet, envolverla con <ConnectionGuard>
-            (components/shared/ConnectionGuard). */}
+          {/* TODO: agregar aquí las rutas del parcial. Si una pantalla
+              requiere internet, envolverla con <ConnectionGuard>
+              (components/shared/ConnectionGuard). */}
 
-        <Route
-          path="*"
-          element={<Navigate to={user ? "/" : "/login"} replace />}
-        />
-      </IonRouterOutlet>
+          <Route
+            path="*"
+            element={<Navigate to={user ? '/' : '/login'} replace />}
+          />
+        </IonRouterOutlet>
 
-      <Alert />
-      {showAppTabs && <AppTabs />}
-    </IonTabs>
+        <Alert />
+        {showAppTabs && <AppTabs />}
+      </IonTabs>
+
+      {(userLoading || isRedirecting) && <LoadingOverlay />}
+    </>
   );
 };
 
