@@ -5,10 +5,8 @@ import { useEffect, useState } from "react";
 import { auth } from "../../firebase/config";
 import { useCollection } from "../../firebase/hooks/useCollection";
 import {
-  browserSessionPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
-  setPersistence,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
@@ -58,23 +56,10 @@ export default function useAuthState() {
 
   //* Effects
   useEffect(() => {
-    setPersistence(auth, browserSessionPersistence).catch(() => {});
-  }, []);
-
-  useEffect(() => {
     let unsubscribeDoc = () => {};
-    let isFirstNotification = true;
 
     const unsubscribeAuth = onAuthStateChanged(auth, (fbUser) => {
       unsubscribeDoc();
-
-      const forceLogout = fbUser && isFirstNotification;
-      isFirstNotification = false;
-
-      if (forceLogout) {
-        signOut(auth).catch(() => {});
-        return; //? el propio signOut dispara una nueva notificación, ya con null
-      }
 
       if (!fbUser) {
         setUser(null);

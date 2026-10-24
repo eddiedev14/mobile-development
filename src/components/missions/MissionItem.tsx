@@ -7,6 +7,8 @@ interface Props {
   onAction: (id: number) => void;
   //? Texto en vivo de la misión en curso (ej. "Has recorrido 23 m" o "Quieto: 4 s")
   liveText?: string;
+  //? Foto de evidencia (data URL) que se muestra debajo de la misión
+  photoUrl?: string;
 }
 
 const STATUS_LABEL = {
@@ -15,7 +17,7 @@ const STATUS_LABEL = {
   locked: "Bloqueada",
 };
 
-const MissionItem = ({ mission, onAction, liveText }: Props) => {
+const MissionItem = ({ mission, onAction, liveText, photoUrl }: Props) => {
   return (
     <IonItem>
       <IonIcon slot="start" icon={mission.icon} />
@@ -27,6 +29,13 @@ const MissionItem = ({ mission, onAction, liveText }: Props) => {
           {mission.points} pts · {STATUS_LABEL[mission.status]}
         </p>
         {liveText && <p>{liveText}</p>}
+        {photoUrl && (
+          <img
+            src={photoUrl}
+            alt={`Evidencia de la misión ${mission.id}`}
+            className="mt-2 w-full max-h-56 object-cover rounded"
+          />
+        )}
       </IonLabel>
 
       {mission.status === "completed" ? (
