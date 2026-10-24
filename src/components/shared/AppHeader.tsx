@@ -3,12 +3,16 @@ import PageHeader from "./PageHeader";
 import { useAppHeader } from "../../hooks/shared/useAppHeader";
 import { useAuth } from "../../hooks/auth/useAuth";
 
-const AppHeader = () => {
+interface Props {
+  title?: string;
+}
+
+const AppHeader = ({ title = "Parcial 02" }: Props) => {
   const { user } = useAuth();
   const { handleLogout } = useAppHeader();
 
   return (
-    <PageHeader title="Parcial 02">
+    <PageHeader title={title}>
       <div className="flex items-center gap-2 pr-6">
         <span className="text-sm font-normal">@{user?.username}</span>
         <IonButton

@@ -26,7 +26,7 @@ import '@ionic/react/css/display.css';
 import '@ionic/react/css/palettes/dark.system.css';
 import './theme/variables.css';
 
-import { AuthPage, HomePage } from './pages';
+import { AuthPage, HomePage, RankingPage, ResultsPage } from './pages';
 import AppTabs from './components/shared/AppTabs';
 import Alert from './components/shared/Alert';
 import { Loader } from './components/shared/Loader';
@@ -75,9 +75,10 @@ const AppRoutes = () => {
 
           {/* Protected Routes */}
           <Route path="/" element={<HomePage />} />
+          <Route path="/results" element={<ResultsPage />} />
+          <Route path="/ranking" element={<RankingPage />} />
 
-          {/* TODO: agregar aquí las rutas del parcial. Si una pantalla
-              requiere internet, envolverla con <ConnectionGuard>
+          {/* TODO: Si el ranking requiere internet, envolverlo con <ConnectionGuard>
               (components/shared/ConnectionGuard). */}
 
           <Route
