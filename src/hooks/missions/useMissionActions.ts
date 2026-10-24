@@ -1,23 +1,62 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { Position } from '@capacitor/geolocation';
 import { useAuth } from '../auth/useAuth';
 import { useCamera } from '../sensors/useCamera';
+import { useGeolocation } from '../sensors/useGeolocation';
 import { useMissions } from './useMissions';
 import { getLocalPhoto, saveLocalPhoto } from '../../utils/photoStorage';
 import { photoToDataUrl } from '../../utils/image';
+import { distanceInMeters } from '../../utils/geo';
+import {
+  MAX_ACCURACY_METERS,
+  MOVE_DISTANCE_METERS,
+} from '../../constants/missions.constant';
 
 export const useMissionActions = () => {
   const { user } = useAuth();
   const { completeMission } = useMissions();
-  const { takePhoto: takeCameraPhoto } = useCamera();
   const uid = user?.id;
 
-  //* Foto de la misión 1 (guardada en localStorage)
-  const [photo, setPhoto] = useState<string | null>(null);
+  //* Sensores
+  const { takePhoto: takeCameraPhoto } = useCamera();
+  const { position, getCurrentLocation, startTracking, stopTracking } =
+    useGeolocation();
 
+  //* Estados
+  const [photo, setPhoto] = useState<string | null>(null);
+  //? Punto de partida de la misión 2. Si hay origen, la misión está en curso
+  const [origin, setOrigin] = useState<Position | null>(null);
+
+  //* Refs
+  //? Evita iniciar la misión 2 dos veces mientras se espera el permiso de ubicación
+  const starting = useRef(false);
+
+  //* Valores derivados
+  //? Metros recorridos desde el origen (null si la misión no está en curso o la lectura es imprecisa)
+  const liveDistance =
+    origin && position && position.coords.accuracy <= MAX_ACCURACY_METERS
+      ? distanceInMeters(
+          origin.coords.latitude,
+          origin.coords.longitude,
+          position.coords.latitude,
+          position.coords.longitude,
+        )
+      : null;
+
+  //* Efectos
   useEffect(() => {
     setPhoto(uid ? getLocalPhoto(uid) : null);
   }, [uid]);
+
+  useEffect(() => {
+    if (liveDistance === null || liveDistance <= MOVE_DISTANCE_METERS) return;
+
+    // Superó la distancia: se termina el seguimiento y se completa la misión
+    setOrigin(null);
+    stopTracking();
+    completeMission(2);
+  }, [liveDistance, stopTracking, completeMission]);
 
   //? Guarda la foto (data URL) en localStorage y la muestra bajo la misión 1.
   //? Devuelve false si no se pudo guardar, para no completar la misión
@@ -51,9 +90,27 @@ export const useMissionActions = () => {
 
   //* Misión 2: Movimiento real
   const trackMovement = async () => {
-    //TODO: Geolocation.getCurrentPosition() como posición original
-    //TODO: Geolocation.watchPosition() y calcular la distancia (Haversine) contra la original
-    //TODO: Si distancia > MOVE_DISTANCE_METERS -> clearWatch + await completeMission(2)
+    if (origin || starting.current) return;
+    starting.current = true;
+
+    try {
+      const start = await getCurrentLocation();
+      if (!start) {
+        toast.error('No se pudo obtener la ubicación');
+        return;
+      }
+
+      // liveDistance compara cada lectura contra este punto de partida
+      setOrigin(start);
+
+      const started = await startTracking();
+      if (!started) {
+        setOrigin(null);
+        toast.error('No se pudo iniciar el seguimiento de ubicación');
+      }
+    } finally {
+      starting.current = false;
+    }
   };
 
   //* Misión 3: Permanencia activa (se habilita al completar la misión 2)
@@ -77,5 +134,5 @@ export const useMissionActions = () => {
   //? Fotos por id de misión (solo la misión 1 tiene foto)
   const photos: Record<number, string> = photo ? { 1: photo } : {};
 
-  return { handleMissionAction, photos };
+  return { handleMissionAction, photos, liveDistance };
 };

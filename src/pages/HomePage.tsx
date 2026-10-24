@@ -9,7 +9,7 @@ import { useLocalNotifications } from "../hooks/sensors/useLocalNotifications";
 const HomePage = () => {
   const { missions, totalPoints, completedCount, totalCount, percent } =
     useMissions();
-  const { handleMissionAction, photos } = useMissionActions();
+  const { handleMissionAction, photos, liveDistance } = useMissionActions();
   const { requestPermission } = useLocalNotifications();
 
   return (
@@ -36,6 +36,7 @@ const HomePage = () => {
             missions={missions}
             onAction={handleMissionAction}
             photos={photos}
+            liveDistance={liveDistance}
           />
         </main>
       </IonContent>

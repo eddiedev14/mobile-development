@@ -19,38 +19,44 @@ const STATUS_LABEL = {
 
 const MissionItem = ({ mission, onAction, liveText, photoUrl }: Props) => {
   return (
-    <IonItem>
-      <IonIcon slot="start" icon={mission.icon} />
+    <div className="rounded-xl border border-black/10 dark:border-white/15 overflow-hidden bg-(--ion-item-background)">
+      <IonItem lines="none">
+        <IonIcon slot="start" icon={mission.icon} />
 
-      <IonLabel className="ion-text-wrap">
-        <h2>{mission.title}</h2>
-        <p>{mission.description}</p>
-        <p>
-          {mission.points} pts · {STATUS_LABEL[mission.status]}
-        </p>
-        {liveText && <p>{liveText}</p>}
-        {photoUrl && (
+        <IonLabel className="ion-text-wrap">
+          <h2>{mission.title}</h2>
+          <p>{mission.description}</p>
+          <p>
+            {mission.points} pts · {STATUS_LABEL[mission.status]}
+          </p>
+          {liveText && <p>{liveText}</p>}
+        </IonLabel>
+
+        {mission.status === "completed" ? (
+          <IonIcon slot="end" icon={checkmarkCircle} color="success" />
+        ) : (
+          <IonButton
+            slot="end"
+            size="small"
+            disabled={mission.status === "locked"}
+            onClick={() => onAction(mission.id)}
+          >
+            Iniciar
+          </IonButton>
+        )}
+      </IonItem>
+
+      {/* La foto va debajo de la fila, a todo el ancho, con proporción fija 4:3 */}
+      {photoUrl && (
+        <div className="px-4 pb-4">
           <img
             src={photoUrl}
             alt={`Evidencia de la misión ${mission.id}`}
-            className="mt-2 w-full max-h-56 object-cover rounded"
+            className="w-full aspect-[4/3] object-cover rounded-lg"
           />
-        )}
-      </IonLabel>
-
-      {mission.status === "completed" ? (
-        <IonIcon slot="end" icon={checkmarkCircle} color="success" />
-      ) : (
-        <IonButton
-          slot="end"
-          size="small"
-          disabled={mission.status === "locked"}
-          onClick={() => onAction(mission.id)}
-        >
-          Iniciar
-        </IonButton>
+        </div>
       )}
-    </IonItem>
+    </div>
   );
 };
 

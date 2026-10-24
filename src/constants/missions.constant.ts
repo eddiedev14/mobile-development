@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core';
 import { cameraOutline, locationOutline, timerOutline } from 'ionicons/icons';
 import type {
   MissionDefinition,
@@ -6,6 +7,10 @@ import type {
 
 //? Distancia (en metros) que se debe mover el usuario para la misión 2
 const MOVE_DISTANCE_METERS = 50;
+
+//? Lecturas con peor precisión (en metros) se ignoran: el GPS da saltos de varios metros.
+//? En el navegador la ubicación simulada (DevTools) reporta poca precisión, por eso se relaja ahí
+const MAX_ACCURACY_METERS = Capacitor.isNativePlatform() ? 20 : 200;
 
 //? Segundos que el usuario debe permanecer quieto en la misión 3
 const STILL_SECONDS = 10;
@@ -44,4 +49,10 @@ const INITIAL_PROGRESS: MissionProgress[] = MISSIONS.map(({ id }) => ({
   completed: false,
 }));
 
-export { INITIAL_PROGRESS, MISSIONS, MOVE_DISTANCE_METERS, STILL_SECONDS };
+export {
+  INITIAL_PROGRESS,
+  MAX_ACCURACY_METERS,
+  MISSIONS,
+  MOVE_DISTANCE_METERS,
+  STILL_SECONDS,
+};
