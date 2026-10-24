@@ -1,6 +1,9 @@
 import type { MissionView } from "../../interfaces/mission.interface";
 import MissionItem from "./MissionItem";
-import { MOVE_DISTANCE_METERS } from "../../constants/missions.constant";
+import {
+  MOVE_DISTANCE_METERS,
+  STILL_SECONDS,
+} from "../../constants/missions.constant";
 
 interface Props {
   missions: MissionView[];
@@ -9,6 +12,8 @@ interface Props {
   photos?: Record<number, string>;
   //? Metros recorridos en la misión 2 (null si no está en curso)
   liveDistance?: number | null;
+  //? Segundos quieto en la misión 3 (null si no está en curso)
+  liveSeconds?: number | null;
 }
 
 const MissionList = ({
@@ -16,6 +21,7 @@ const MissionList = ({
   onAction,
   photos,
   liveDistance,
+  liveSeconds,
 }: Props) => {
   return (
     <div className="flex flex-col gap-4 px-4">
@@ -28,7 +34,9 @@ const MissionList = ({
           liveText={
             mission.id === 2 && liveDistance != null
               ? `Has recorrido ${Math.round(liveDistance)} m de ${MOVE_DISTANCE_METERS} m`
-              : undefined
+              : mission.id === 3 && liveSeconds != null
+                ? `Quieto: ${liveSeconds} s de ${STILL_SECONDS} s`
+                : undefined
           }
         />
       ))}

@@ -4,6 +4,8 @@ import { Position } from '@capacitor/geolocation';
 import { useAuth } from '../auth/useAuth';
 import { useCamera } from '../sensors/useCamera';
 import { useGeolocation } from '../sensors/useGeolocation';
+import { useAccelerometer } from '../sensors/useAccelerometer';
+import { useHaptics } from '../sensors/useHaptics';
 import { useMissions } from './useMissions';
 import { getLocalPhoto, saveLocalPhoto } from '../../utils/photoStorage';
 import { photoToDataUrl } from '../../utils/image';
@@ -11,6 +13,7 @@ import { distanceInMeters } from '../../utils/geo';
 import {
   MAX_ACCURACY_METERS,
   MOVE_DISTANCE_METERS,
+  STILL_SECONDS,
 } from '../../constants/missions.constant';
 
 export const useMissionActions = () => {
@@ -22,11 +25,17 @@ export const useMissionActions = () => {
   const { takePhoto: takeCameraPhoto } = useCamera();
   const { position, getCurrentLocation, startTracking, stopTracking } =
     useGeolocation();
+  const {
+    isMoving,
+    start: startAccelerometer,
+    stop: stopAccelerometer,
+  } = useAccelerometer();
+  const { vibrate } = useHaptics();
 
   //* Estados
   const [photo, setPhoto] = useState<string | null>(null);
-  //? Punto de partida de la misión 2. Si hay origen, la misión está en curso
   const [origin, setOrigin] = useState<Position | null>(null);
+  const [secondsStill, setSecondsStill] = useState<number | null>(null);
 
   //* Refs
   //? Evita iniciar la misión 2 dos veces mientras se espera el permiso de ubicación
@@ -57,6 +66,31 @@ export const useMissionActions = () => {
     stopTracking();
     completeMission(2);
   }, [liveDistance, stopTracking, completeMission]);
+
+  useEffect(() => {
+    //? null = misión no iniciada. OJO: 0 es una cuenta válida, por eso no se usa !secondsStill
+    if (secondsStill === null) return;
+
+    // Si se movió, reiniciar cuenta atrás
+    if (isMoving) {
+      setSecondsStill(0);
+      return;
+    }
+
+    // Si ya pasaron 10 segundos
+    if (secondsStill >= STILL_SECONDS) {
+      setSecondsStill(null);
+      stopAccelerometer();
+      vibrate();
+      completeMission(3);
+      return;
+    }
+
+    const timer = setTimeout(() => setSecondsStill((s) => (s ?? 0) + 1), 1000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [secondsStill, isMoving, stopAccelerometer, vibrate, completeMission]);
 
   //? Guarda la foto (data URL) en localStorage y la muestra bajo la misión 1.
   //? Devuelve false si no se pudo guardar, para no completar la misión
@@ -115,9 +149,16 @@ export const useMissionActions = () => {
 
   //* Misión 3: Permanencia activa (se habilita al completar la misión 2)
   const stayStill = async () => {
-    //TODO: Motion.addListener("accel", ...) y detectar que el celular está quieto (sin bloquear pantalla)
-    //TODO: Si pasan STILL_SECONDS quieto -> Haptics.vibrate() + await completeMission(3)
-    //TODO: Si se mueve, reiniciar la cuenta
+    if (secondsStill !== null) return;
+
+    try {
+      await startAccelerometer();
+    } catch {
+      toast.error('No se pudo activar el acelerómetro');
+      return;
+    }
+
+    setSecondsStill(0);
   };
 
   const handleMissionAction = async (id: number) => {
@@ -134,5 +175,5 @@ export const useMissionActions = () => {
   //? Fotos por id de misión (solo la misión 1 tiene foto)
   const photos: Record<number, string> = photo ? { 1: photo } : {};
 
-  return { handleMissionAction, photos, liveDistance };
+  return { handleMissionAction, photos, liveDistance, liveSeconds: secondsStill };
 };

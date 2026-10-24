@@ -34,9 +34,7 @@ export const useMissionsState = () => {
 
     // Firestore manda; si el documento no trae misiones se usa lo guardado localmente
     setProgress(
-      user.missions ??
-        getLocalProgress(user.id)?.missions ??
-        INITIAL_PROGRESS,
+      user.missions ?? getLocalProgress(user.id)?.missions ?? INITIAL_PROGRESS,
     );
   }, [user]);
 
@@ -92,6 +90,7 @@ export const useMissionsState = () => {
 
       const isOneMissing =
         newProgressState.filter((p) => !p.completed).length === 1;
+      const isAllCompleted = newProgressState.every((p) => p.completed);
 
       if (!user) return;
 
@@ -113,10 +112,14 @@ export const useMissionsState = () => {
       }
 
       // Enviar notificación local
-      notify({
-        title: isOneMissing
+      const notifyTitle = isAllCompleted
+        ? 'Todas las tareas completadas!'
+        : isOneMissing
           ? 'Te falta 1 misión para completar'
-          : 'Misión completada',
+          : 'Misión completada';
+
+      notify({
+        title: notifyTitle,
         body: `Has completado una misión. Puntaje Total: ${newTotalPoints}`,
       });
 
