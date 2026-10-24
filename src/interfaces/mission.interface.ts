@@ -29,4 +29,6 @@ export interface RankingEntry {
   id: string;
   username: string;
   points: number;
+  //? Posición real en el ranking (los empates comparten posición)
+  position: number;
 }
