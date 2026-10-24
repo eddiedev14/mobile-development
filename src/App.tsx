@@ -28,16 +28,9 @@ import "@ionic/react/css/display.css";
 import "@ionic/react/css/palettes/dark.system.css";
 import "./theme/variables.css";
 
-import {
-  AuthPage,
-  ContactsTabs,
-  FruitsTabs,
-  HomePage,
-  TasksTabs,
-} from "./pages";
+import { AuthPage, HomePage } from "./pages";
 import AppTabs from "./components/shared/AppTabs";
 import Alert from "./components/shared/Alert";
-import ConnectionGuard from "./components/shared/ConnectionGuard";
 import { Loader } from "./components/shared/Loader";
 import { useAuth } from "./hooks/auth/useAuth";
 
@@ -77,9 +70,9 @@ const AppRoutes = () => {
     return <RedirectLoader />;
   }
 
-  //? Las tabs principales sólo se muestran en la página de inicio,
-  //? ya que cada app se abre como una página nueva (con botón de "atrás")
-  const showAppTabs = user && pathname === "/";
+  //? Las tabs se muestran en todas las rutas protegidas (las rutas de
+  //? autenticación nunca llegan aquí con sesión iniciada)
+  const showAppTabs = !!user;
 
   return (
     <IonTabs>
@@ -91,30 +84,9 @@ const AppRoutes = () => {
         {/* Protected Routes */}
         <Route path="/" element={<HomePage />} />
 
-        {/* Cada app se monta con un splat para que sus sub-rutas
-            (/contacts/list, /tasks/new, etc.) queden dentro de su alcance */}
-        {/* Tasks y Contacts necesitan internet: el guard muestra la pantalla de
-            aviso si se entra sin conexión o si se cae estando dentro.
-            Fruits se queda fuera porque funciona con IndexedDB (local) */}
-        <Route
-          path="/contacts/*"
-          element={
-            <ConnectionGuard>
-              <ContactsTabs />
-            </ConnectionGuard>
-          }
-        />
-
-        <Route
-          path="/tasks/*"
-          element={
-            <ConnectionGuard>
-              <TasksTabs />
-            </ConnectionGuard>
-          }
-        />
-
-        <Route path="/fruits/*" element={<FruitsTabs />} />
+        {/* TODO: agregar aquí las rutas del parcial.
+            Si una pantalla requiere internet, envolverla con <ConnectionGuard>
+            (components/shared/ConnectionGuard). */}
 
         <Route
           path="*"

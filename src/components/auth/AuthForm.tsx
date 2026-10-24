@@ -28,8 +28,8 @@ export const AuthForm = ({ isSignup }: Props) => {
       </h1>
       <p className="text-sm font-light text-center">
         {isSignup
-          ? "Regístrate para empezar a gestionar tus tareas"
-          : "Inicia Sesión para seguir gestionando tus tareas"}
+          ? "Regístrate para empezar"
+          : "Inicia sesión para continuar"}
       </p>
 
       <form onSubmit={handleSubmit} className="w-full mt-2 flex flex-col gap-4">

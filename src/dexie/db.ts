@@ -1,11 +1,10 @@
-import Dexie from "dexie";
+import Dexie from 'dexie';
 
 // Instanciar una nueva BD
-const db = new Dexie("Challenge-06");
+const db = new Dexie('Parcial-02');
 
-// Agregar tabla fruits en la versión 1
 db.version(1).stores({
-  fruits: "++id, name, color",
+  // items: "++id, name",
 });
 
 export default db;

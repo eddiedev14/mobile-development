@@ -1,13 +1,5 @@
-# Challenge 06: Firebase Storage & Dexie
+# Parcial 02
 
-1. Implement a new app in Ionic with real login and routes to handle, based on the previous challenges:
+Eddie Santiago Delgado Campo - 2235060
 
-   a. Contacts in Firebase
-
-   b. Tasks in Realtime
-
-   c. Fruits in Dexie
-
-2. Valide if you have network connection, then enable or disable **Contacts and Tasks** actions depending on the network connection.
-
-> Eddie Santiago Delgado Campo - 2235060
+Desarrollo de Software para Plataformas Móviles
