@@ -1,13 +1,21 @@
-# Challenge 06: Firebase Storage & Dexie
+# Challenge 09: Leaflet Map
 
-1. Implement a new app in Ionic with real login and routes to handle, based on the previous challenges:
+Complete the maps app by using different sensors. Some examples:
 
-   a. Contacts in Firebase
+a. Check if you have wifi to get current address, show the map, etc.
 
-   b. Tasks in Realtime
+b. You could detect if the phone is moving or not, to start/stop tracking
 
-   c. Fruits in Dexie
+c. Save the tracking in a JSON file, then make a history page to show previous tracking in a day
 
-2. Valide if you have network connection, then enable or disable **Contacts and Tasks** actions depending on the network connection.
+d. Take a picture and put the current location as a watermark
+
+e. Vibrate the phone on start tracking
+
+f. Stop tracking when battery is low.
+
+g. Create smart notifications (long time without moving, no connection, quick moving -> localNotifications)
+
+h. Show nearest places with OpenCage API
 
 > Eddie Santiago Delgado Campo - 2235060
