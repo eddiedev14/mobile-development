@@ -37,6 +37,7 @@ export const MapView = () => {
     places,
     photo,
     ready,
+    permissionDenied,
     isTracking,
     isOnline,
     batteryLevel,
@@ -115,7 +116,11 @@ export const MapView = () => {
             justifyContent: 'center',
           }}
         >
-          <p>Obteniendo ubicación...</p>
+          <p>
+            {permissionDenied
+              ? 'Permiso de ubicación denegado. Actívalo en los ajustes del teléfono.'
+              : 'Obteniendo ubicación...'}
+          </p>
         </div>
       )}
 

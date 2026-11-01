@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { PermissionState } from '@capacitor/core';
 import { Geolocation, Position } from '@capacitor/geolocation';
 
 export const useGeolocation = () => {
   const [position, setPosition] = useState<Position | null>(null);
+  const [permission, setPermission] = useState<PermissionState | null>(null);
 
   // ID utilizado para identificar y detener la escucha del tracking
   const watchId = useRef<string | null>(null);
@@ -16,6 +18,22 @@ export const useGeolocation = () => {
       }
     };
   }, []);
+
+  /**
+   * Pide al usuario el permiso de ubicación y devuelve el estado resultante.
+   */
+  const requestPermissions = async (): Promise<PermissionState> => {
+    try {
+      const { location } = await Geolocation.requestPermissions();
+      setPermission(location);
+      return location;
+    } catch (error) {
+      // En web no existe requestPermissions (y en nativo falla si faltan permisos en el
+      // manifest o el GPS está apagado): se deja que el navegador pregunte al pedir la posición
+      console.error('No se pudo pedir el permiso de ubicación:', error);
+      return 'prompt';
+    }
+  };
 
   /**
    * Obtiene la ubicación actual del dispositivo una sola vez
@@ -89,6 +107,8 @@ export const useGeolocation = () => {
 
   return {
     position,
+    permission,
+    requestPermissions,
     getCurrentLocation,
     startTracking,
     stopTracking,

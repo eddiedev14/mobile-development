@@ -20,8 +20,14 @@ const ALERT_COOLDOWN_MS = 2 * 60_000; // para no repetir el aviso de velocidad
 const STILL_STOP_MS = 5 * 60_000; // quieto (acelerómetro) este tiempo detiene el tracking
 
 export const useMapView = () => {
-  const { position, getCurrentLocation, startTracking, stopTracking } =
-    useGeolocation();
+  const {
+    position,
+    permission,
+    requestPermissions,
+    getCurrentLocation,
+    startTracking,
+    stopTracking,
+  } = useGeolocation();
   const { isOnline } = useNetwork();
   const { level: batteryLevel, isCharging } = useBattery();
   const { isMoving } = useMotion();
@@ -48,8 +54,11 @@ export const useMapView = () => {
   // solo hasta que el teléfono quede quieto una vez
   const autoStartArmed = useRef(true);
 
+  // Lo primero al montar: pedir el permiso de ubicación y, si no fue negado, leer la posición
   useEffect(() => {
-    getCurrentLocation();
+    requestPermissions().then((state) => {
+      if (state !== 'denied') getCurrentLocation();
+    });
   }, []);
 
   useEffect(() => {
@@ -201,6 +210,7 @@ export const useMapView = () => {
     places,
     photo,
     ready,
+    permissionDenied: permission === 'denied',
     isTracking,
     isOnline,
     batteryLevel,
