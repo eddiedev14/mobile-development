@@ -3,6 +3,7 @@ import { Haptics } from '@capacitor/haptics';
 import { useGeolocation } from '../hooks/sensors/useGeolocation';
 import { useNetwork } from './sensors/useNetwork';
 import { useBattery } from './sensors/useBattery';
+import { useMotion } from './sensors/useMotion';
 import { OpenCageResponse, Result } from '../interfaces/opencage.interface';
 import { getAddress } from '../actions/getAddress.action';
 import { getNearbyPlaces } from '../actions/getNearbyPlaces.action';
@@ -16,12 +17,16 @@ const IDLE_MS = 5 * 60_000; // tiempo sin moverse para avisar
 const MOVE_METERS = 15; // menos que esto se considera ruido del GPS
 const FAST_SPEED = 20; // m/s (72 km/h)
 const ALERT_COOLDOWN_MS = 2 * 60_000; // para no repetir el aviso de velocidad
+const STILL_STOP_MS = 5 * 60_000; // quieto (acelerómetro) este tiempo detiene el tracking
 
 export const useMapView = () => {
   const { position, getCurrentLocation, startTracking, stopTracking } =
     useGeolocation();
   const { isOnline } = useNetwork();
   const { level: batteryLevel, isCharging } = useBattery();
+  const { isMoving } = useMotion();
+  const lowBattery =
+    !isCharging && batteryLevel !== null && batteryLevel < LOW_BATTERY;
 
   const [coordinates, setCoordinates] = useState<[number, number][]>([]);
   const [address, setAddress] = useState<OpenCageResponse | null>(null);
@@ -37,6 +42,11 @@ export const useMapView = () => {
     null,
   );
   const lastFastAlert = useRef(0);
+  const coordinatesRef = useRef(coordinates);
+  coordinatesRef.current = coordinates;
+  // Si el usuario (o la batería) detiene el tracking mientras te mueves, no se reinicia
+  // solo hasta que el teléfono quede quieto una vez
+  const autoStartArmed = useRef(true);
 
   useEffect(() => {
     getCurrentLocation();
@@ -96,16 +106,30 @@ export const useMapView = () => {
 
   // Batería baja: detiene el tracking si no está cargando
   useEffect(() => {
-    if (
-      isTracking &&
-      !isCharging &&
-      batteryLevel !== null &&
-      batteryLevel < LOW_BATTERY
-    ) {
+    if (isTracking && lowBattery) {
       handleStop();
       notify('Batería baja', 'Se detuvo el seguimiento para ahorrar batería');
     }
-  }, [batteryLevel, isCharging, isTracking, coordinates]);
+  }, [lowBattery, isTracking]);
+
+  // Inicio automático: tras 2 s de movimiento sostenido del teléfono
+  useEffect(() => {
+    if (!isMoving) autoStartArmed.current = true;
+    else if (autoStartArmed.current && !isTracking && !lowBattery)
+      handleStart();
+  }, [isMoving, isTracking]);
+
+  // Parada automática: teléfono quieto 5 min y sin cambio de lugar según el GPS
+  useEffect(() => {
+    if (!isTracking || isMoving) return;
+    const id = setTimeout(() => {
+      const moved = lastMoved.current;
+      if (moved && Date.now() - moved.at < STILL_STOP_MS) return;
+      handleStop();
+      notify('Seguimiento detenido', 'El teléfono estuvo quieto 5 minutos');
+    }, STILL_STOP_MS);
+    return () => clearTimeout(id);
+  }, [isTracking, isMoving]);
 
   const handleStart = async () => {
     if (startedAt.current) return;
@@ -125,13 +149,14 @@ export const useMapView = () => {
     const started = startedAt.current;
     if (!started) return;
     startedAt.current = null;
+    autoStartArmed.current = false;
 
     await stopTracking();
     setIsTracking(false);
     await saveSession({
       startedAt: started,
       endedAt: new Date().toISOString(),
-      coordinates,
+      coordinates: coordinatesRef.current,
     });
   };
 
