@@ -1,17 +1,15 @@
-@import "tailwindcss" important;
+@import 'tailwindcss' important;
+@import 'leaflet/dist/leaflet.css';
 
 :root {
-  --ion-font-family: "Clash Display", sans-serif;
+  --ion-font-family: 'Clash Display', sans-serif;
 }
 
 body {
   font-size: 16px;
 }
 
-.swal2-container {
-  z-index: 99999 !important;
-}
-
-.swal2-popup {
-  z-index: 100000 !important;
+.map-container {
+  width: 100%;
+  height: calc(100vh - 140px);
 }

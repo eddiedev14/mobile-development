@@ -4,15 +4,12 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
-} from "@ionic/react";
-import type { ReactNode } from "react";
+} from '@ionic/react';
+import type { ReactNode } from 'react';
 
 interface Props {
   title: string;
-
-  //? Href al que vuelve el botón de "atrás" cuando no hay historial
   backHref?: string;
-
   //? Acciones que se muestran a la derecha del toolbar
   children?: ReactNode;
 }

@@ -1,8 +1,8 @@
-import type { ReactNode } from "react";
-import { IonContent, IonIcon, IonPage, IonText } from "@ionic/react";
-import { cloudOfflineOutline } from "ionicons/icons";
-import PageHeader from "./PageHeader";
-import { useNetwork } from "../../hooks/sensors/useNetwork";
+import type { ReactNode } from 'react';
+import { IonContent, IonIcon, IonPage, IonText } from '@ionic/react';
+import { cloudOfflineOutline } from 'ionicons/icons';
+import PageHeader from './PageHeader';
+import { useNetwork } from '../../hooks/sensors/useNetwork';
 
 interface Props {
   //? Contenido de la app que requiere conexión (por ejemplo <TasksTabs />)
