@@ -8,8 +8,11 @@ import {
 } from "@ionic/react";
 
 import GifList from "../components/GifList";
+import { useGiphy } from "../hooks/useGiphy";
 
 const Giphy = () => {
+  const { query, gifs, handleQueryChange, handleSubmit } = useGiphy();
+
   return (
     <IonPage>
       <IonHeader>
@@ -24,10 +27,22 @@ const Giphy = () => {
             <p className="text-sm">Eddie Santiago Delgado Campo - 223506092</p>
           </div>
 
-          {/* TODO: conectar la búsqueda con la API de Giphy */}
-          <IonSearchbar placeholder="Buscar gifs" className="p-0" />
+          {/*Input de búsqueda*/}
+          <form action="#" onSubmit={handleSubmit}>
+            <IonSearchbar
+              onIonInput={(e) =>
+                handleQueryChange(
+                  (e.target as HTMLIonSearchbarElement).value ?? "",
+                )
+              }
+              value={query}
+              placeholder="Buscar gifs"
+              className="p-0"
+            />
+          </form>
 
-          <GifList />
+          {/*Lista de gifs*/}
+          <GifList gifs={gifs} />
         </main>
       </IonContent>
     </IonPage>
