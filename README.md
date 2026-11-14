@@ -1,17 +1,18 @@
-# Challenge 03: Taskie App in Ionic
+# Challenge 09: Giphy App
 
-Create a new Task Manager app in ionic. It should contain:
+> [!IMPORTANT]
+> Por cuestiones de seguridad, no publico mi API_KEY, así que dejo la template en env.example, la metología es: duplicar .env.example, renombrarlo como .env y colocar el valor de su API_KEY
 
-✓ States and effects, if it’s necessary.
+✓ Create an account in https://developers.giphy.com/
 
-✓ Child and parent components – at least 3 components.
+✓ Add one App and read api documentation from GIPHY
 
-✓ View a task list
+✓ Create a new project to search and show Gifs, you could search by writing in an input field, then show the Gifs in screen.
 
-✓ Add new tasks
+✓ Set the api key into environment variables (.env)
 
-✓ Mark tasks as completed
+✓ Use search api to get gifs from Giphy
 
-✓ Delete tasks
+✓ Implement Fetch / Axios to call the api.
 
 > Eddie Santiago Delgado Campo - 2235060
