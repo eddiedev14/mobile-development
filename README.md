@@ -1,4 +1,4 @@
-# Challenge 09: Giphy App
+# Challenge 10: Giphy App
 
 > [!IMPORTANT]
 > Por cuestiones de seguridad, no publico mi API_KEY, así que dejo la template en env.example, la metología es: duplicar .env.example, renombrarlo como .env y colocar el valor de su API_KEY
