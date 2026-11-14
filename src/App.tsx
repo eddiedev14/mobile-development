@@ -1,7 +1,7 @@
 import { Route } from "react-router-dom";
 import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import Taskie from "./pages/Taskie";
+import Giphy from "./pages/Giphy";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -27,7 +27,7 @@ const App = () => (
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
-        <Route path="/" element={<Taskie />} />
+        <Route path="/" element={<Giphy />} />
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>
